@@ -1,0 +1,113 @@
+/* Dashboard composition inspired by the supplied reference. */
+.weather-artwork { width: 90px; height: 76px; flex-shrink: 0; }
+.weather-artwork.small { width: 48px; height: 40px; }
+.weather-summary .weather-current { flex-wrap: wrap; gap: 10px; }
+.weather-summary .weather-current > strong { font-size: 30px; }
+.weather-summary .weather-current > span { font-size: 12px; }
+.weather-hours .weather-artwork { margin: 5px 0; }
+.watch-summary .fire-potential { display: block; }
+.watch-summary .risk-gauge { margin: 18px auto 0; width: 100%; }
+.watch-summary .risk-explainer { text-align: center; max-width: 230px; margin: 0 auto 10px; }
+.watch-summary .risk-method { text-align: center; }
+.dashboard-overview > .analytics-grid { margin-top: 20px; margin-bottom: 0; }
+@media (min-width: 1001px) {
+  .dashboard-overview .watch-layout, .dashboard-overview .analytics-grid { align-items: stretch; }
+  .dashboard-overview .watch-summary { align-content: stretch; grid-template-rows: minmax(min-content, 1fr) auto; }
+  .analytics-grid > .temperature-card, .analytics-grid > .weather-summary { display: flex; flex-direction: column; }
+  .analytics-grid .temperature-main { flex: 1; }
+  .analytics-grid .weather-source { margin-top: auto; padding-top: 16px; align-self: flex-start; }
+}
+@media (max-width: 700px) { .dashboard-overview > .analytics-grid { margin-top: 14px; } }
+@media (max-width: 700px) { .role-app .header-menu .menu-role { display: inline; font-size: 10px; max-width: 75px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }.role-app .header-menu > summary { gap: 4px; }.role-app .header-menu .menu-avatar { display: none; } }
+:root { --bg: #f5f6f9; --text: #202735; --muted: #7b8493; --line: #edf0f4; --blue: #2864ef; --blue-soft: #edf3ff; }
+.role-app { min-height: 100dvh; padding-left: 220px; padding-top: 74px; }
+.app-header { position: fixed; inset: 0 0 auto 0; height: 74px; min-height: 74px; padding: 0 30px 0 22px; gap: 24px; z-index: 50; background: #fff; }
+.app-brand { width: 198px; flex-shrink: 0; font-size: 22px; letter-spacing: -1px; }
+.brand-mark { width: 32px; height: 36px; }
+.workspace-label { color: #8a93a2; font-size: 12px; }
+.workspace-label > span { padding: 0 12px; color: #c3c9d3; }
+.header-tools { gap: 6px; }
+.header-tools .icon-button { border: 1px solid var(--line); border-radius: 50%; width: 35px; height: 35px; }
+.header-menu { margin-left: 8px; }
+.menu-role { font-size: 12px; }
+.app-sidebar { position: fixed; left: 0; top: 74px; bottom: 0; width: 220px; display: flex; flex-direction: column; padding: 28px 14px 18px; background: white; border-right: 1px solid var(--line); overflow-y: auto; }
+.sidebar-caption { display: block; padding: 0 14px; margin-bottom: 12px; font-size: 10px; font-weight: 600; letter-spacing: 1.6px; color: #9ca5b3; }
+.app-sidebar nav .sidebar-caption { margin-top: 32px; }
+.app-sidebar button { display: flex; align-items: center; gap: 12px; width: 100%; text-align: left; padding: 12px 14px; border-radius: 9px; background: transparent; color: #657082; font-size: 12px; margin-bottom: 4px; }
+.app-sidebar button.active { background: var(--blue-soft); color: var(--blue); font-weight: 600; box-shadow: inset 3px 0 var(--blue); }
+.app-sidebar button:hover { background: #f3f6fb; }
+.sidebar-bottom { margin-top: auto; padding-top: 32px; }
+.forest-note { position: relative; overflow: hidden; padding: 20px 16px; border-radius: 13px; background: linear-gradient(135deg, #397aff, #1a48b9 70%, #102c72); color: #fff; margin-top: 16px; box-shadow: 0 8px 16px #2758c21c; }
+.forest-note > span { font-size: 8px; letter-spacing: 1.4px; opacity: .7; }
+.forest-note strong { display: block; font-size: 16px; line-height: 1.6; font-weight: 500; margin: 10px 0; }
+.forest-note p { font-size: 10px; opacity: .65; line-height: 1.8; }
+.forest-lines { position: absolute; inset: 0; opacity: .13; pointer-events: none; background-image: radial-gradient(#fff 1px, transparent 1px); background-size: 8px 8px; mask-image: linear-gradient(90deg, transparent, black); }
+.role-app .workspace-main { max-width: 1680px; padding: 26px 30px 36px; }
+.overview-context { display: flex; justify-content: space-between; align-items: center; gap: 16px; margin: 0 0 20px; color: #8c95a3; font-size: 11px; }
+.overview-context > span:first-child { letter-spacing: 1.5px; font-size: 10px; font-weight: 600; }
+.metric-grid { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 16px; margin-bottom: 20px; }
+.metric-card, .dashboard-card { background: white; border: 1px solid #ebedf2; border-radius: 17px; box-shadow: 0 2px 3px #263d6603; min-width: 0; }
+.metric-card { padding: 20px 22px 17px; --accent: #326eff; }
+.metric-card.orange { --accent: #e79b36; }.metric-card.green { --accent: #3fb28a; }.metric-card.purple { --accent: #8a6ad6; }
+.metric-card > div { display: flex; align-items: center; justify-content: space-between; gap: 10px; font-size: 12px; font-weight: 500; }
+.metric-card svg { color: var(--accent); }
+.metric-card > strong { display: block; font-size: 32px; letter-spacing: -1.2px; font-weight: 600; margin: 12px 0 3px; line-height: 1.2; }
+.metric-card > strong small { color: #b6bdc8; font-size: 16px; font-weight: 400; letter-spacing: 0; }
+.metric-card p { display: flex; align-items: center; gap: 6px; color: #8c95a3; font-size: 10px; }
+.metric-card i { width: 5px; height: 5px; border-radius: 50%; background: var(--accent); }
+.analytics-grid { display: grid; grid-template-columns: minmax(0, 1fr) 330px; gap: 20px; margin-bottom: 20px; align-items: start; }
+.dashboard-card { padding: 22px; }
+.card-heading { display: flex; align-items: flex-start; justify-content: space-between; gap: 12px; }
+.card-heading h2 { font-size: 14px; font-weight: 600; letter-spacing: -.2px; }
+.card-heading p { font-size: 11px; color: #9aa2ae; margin-top: 4px; }
+.range-switch { display: flex; background: #f5f7fa; padding: 3px; border-radius: 7px; flex-shrink: 0; }
+.range-switch button { background: transparent; color: #9aa2ae; font-size: 10px; padding: 5px 9px; border-radius: 5px; }
+.range-switch button[aria-pressed="true"] { background: white; box-shadow: 0 1px 4px #1e335719; color: var(--blue); }
+.temperature-main { display: flex; align-items: center; margin-top: 12px; gap: 10px; }
+.temperature-number { width: 148px; flex-shrink: 0; }
+.temperature-number > span { display: block; font-size: 11px; color: #939ba7; }
+.temperature-number strong { display: block; font-size: 48px; font-weight: 600; letter-spacing: -2px; line-height: 1.4; }
+.temperature-number strong small { font-size: 23px; color: #aab2bf; font-weight: 400; }
+.temperature-number .metric-caption { display: inline-block; font-size: 9px; background: #edf8f3; color: #329a77; border-radius: 4px; padding: 3px 6px; }
+.temperature-chart { height: 180px; flex: 1; min-width: 0; }
+.chart-empty { height: 100%; display: flex; flex-direction: column; justify-content: center; align-items: center; color: var(--muted); font-size: 12px; text-align: center; }
+.climate-metrics { display: grid; grid-template-columns: repeat(3, 1fr); border: 1px solid var(--line); border-radius: 10px; padding: 12px 0; margin-top: 16px; }
+.climate-metrics > div { display: flex; gap: 9px; padding: 0 14px; border-right: 1px solid var(--line); }
+.climate-metrics > div:last-child { border: 0; }
+.climate-metrics svg { color: #6d90e6; margin-top: 3px; }
+.climate-metrics span { font-size: 10px; color: #a1a8b4; }
+.climate-metrics strong { display: block; color: #303b4e; font-weight: 500; font-size: 15px; margin-top: 2px; }
+.chart-foot { display: flex; justify-content: space-between; color: #a2aab6; font-size: 10px; margin-top: 12px; }
+.chart-foot a { color: inherit; }
+.fire-potential { --risk-color: #4cba93; }.fire-potential.medium { --risk-color: #e7aa46; }.fire-potential.high { --risk-color: #e07862; }.fire-potential.unknown { --risk-color: #a3adbd; }
+.risk-badge { color: var(--risk-color); border: 1px solid currentColor; border-radius: 5px; padding: 2px 6px; font-size: 10px; white-space: nowrap; }
+.risk-gauge { position: relative; max-width: 255px; margin: 18px auto 0; }
+.risk-gauge svg { width: 100%; display: block; }
+.risk-gauge > div { position: absolute; bottom: 22px; left: 0; right: 0; text-align: center; }
+.risk-gauge strong { display: block; font-size: 38px; font-weight: 600; letter-spacing: -1.5px; line-height: 1.2; }
+.risk-gauge small { color: #adb5c0; font-size: 13px; font-weight: 400; letter-spacing: 0; }
+.risk-gauge span { color: #929baa; font-size: 10px; }
+.risk-explainer { text-align: center; font-size: 10px; color: #99a2af; max-width: 220px; margin: 0 auto 10px; }
+.risk-method { font-size: 11px; color: #8993a2; text-align: center; }
+.risk-method > summary { display: inline-block; background: #f6f7f9; border: 1px solid var(--line); border-radius: 6px; padding: 5px 12px; font-size: 10px; color: #606e82; }
+.risk-method p { text-align: left; margin: 12px 0; line-height: 1.8; }
+.dashboard-overview .watch-layout { grid-template-columns: minmax(0, 1fr) 330px; gap: 20px; align-items: stretch; }
+.dashboard-overview .watch-camera, .dashboard-overview .watch-inbox, .dashboard-overview .weather-summary { border-radius: 17px; border-color: #ebedf2; }
+.dashboard-overview .watch-camera .cctv-wall { padding: 22px; }
+.dashboard-overview .cctv-toolbar { gap: 12px; }
+.dashboard-overview .cctv-wall-title strong { font-size: 14px; }
+.dashboard-overview .cctv-controls button { font-size: 10px; padding: 6px 8px; min-height: 30px; }
+.dashboard-overview .cctv-grid { gap: 12px; }
+.dashboard-overview .cctv-wall-foot { font-size: 10px; }
+.dashboard-overview .inbox-heading { min-height: 60px; padding: 18px 20px; }
+.dashboard-overview .inbox-heading h2, .dashboard-overview .weather-heading h2 { font-size: 14px; }
+.dashboard-overview .inbox-empty { min-height: 140px; padding: 22px; gap: 8px; }
+.dashboard-overview .inbox-empty h3 { font-size: 13px; }.dashboard-overview .inbox-empty p, .dashboard-overview .inbox-note { font-size: 11px; }
+.dashboard-overview .incident-entry { padding: 14px 20px; }.dashboard-overview .entry-copy > strong { font-size: 12px; }.dashboard-overview .entry-copy > span { font-size: 11px; }.dashboard-overview .entry-copy > small { font-size: 10px; }
+.dashboard-overview .alert-list { max-height: 340px; overflow-y: auto; }
+.dashboard-overview .watch-summary { gap: 20px; }
+.dashboard-overview .weather-heading > span { font-size: 10px; }
+@media (min-width: 1700px) { .role-app .workspace-main { padding-top: 36px; }.temperature-chart { height: 220px; } }
+@media (max-width: 1200px) { .role-app { padding-left: 190px; }.app-sidebar { width: 190px; }.app-brand { width: 168px; }.role-app .workspace-main { padding: 22px; }.analytics-grid, .dashboard-overview .watch-layout { grid-template-columns: minmax(0, 1fr) 290px; gap: 16px; }.dashboard-card { padding: 18px; }.temperature-main { flex-direction: column; align-items: stretch; }.temperature-number { width: auto; }.temperature-number strong { font-size: 34px; }.temperature-chart { flex: auto; height: 170px; }.climate-metrics > div { padding: 0 8px; gap: 5px; }.climate-metrics svg { display: none; }.metric-card { padding: 16px; }.metric-card > div { font-size: 11px; } }
+@media (max-width: 1000px) { .workspace-label { display: none; }.analytics-grid, .dashboard-overview .watch-layout { grid-template-columns: minmax(0, 1fr); }.temperature-main { flex-direction: row; }.temperature-number { width: 140px; }.temperature-chart { flex: 1; }.fire-potential { display: grid; grid-template-columns: 1fr 240px; align-items: center; }.fire-potential .card-heading { grid-column: 1; }.risk-gauge { grid-column: 2; grid-row: 1 / 4; margin: 0; width: 100%; }.risk-explainer { text-align: left; margin: 10px 0; max-width: none; }.risk-method { text-align: left; }.watch-summary { grid-template-columns: 1fr 1fr; }.metric-grid { grid-template-columns: repeat(2, 1fr); } }
+@media (max-width: 700px) { .role-app { padding: 112px 0 0; }.app-header { height: 62px; min-height: 62px; padding: 0 14px; flex-wrap: nowrap; gap: 8px; }.app-brand { width: auto; font-size: 18px; gap: 5px; }.brand-mark { width: 25px; height: 29px; }.brand-dot { margin-left: -5px; }.header-tools { gap: 3px; }.header-tools .icon-button { width: 30px; height: 30px; }.header-menu { margin-left: 0; }.menu-avatar { width: 28px; height: 28px; }.demo-menu > summary { font-size: 11px; min-height: 32px; padding: 0 7px; gap: 4px; }.app-sidebar { inset: 62px 0 auto; width: 100%; height: 50px; padding: 5px 8px; border-bottom: 1px solid var(--line); z-index: 40; overflow-x: auto; }.app-sidebar > .sidebar-caption, .app-sidebar nav .sidebar-caption, .sidebar-bottom { display: none; }.app-sidebar nav { display: flex; gap: 4px; }.app-sidebar button { white-space: nowrap; margin: 0; padding: 9px 10px; font-size: 10px; gap: 6px; }.app-sidebar button svg { width: 14px; }.app-sidebar button.active { box-shadow: none; }.role-app .workspace-main { padding: 18px 12px 28px; }.overview-context { font-size: 9px; gap: 8px; }.overview-context > span:first-child { font-size: 8px; }.metric-grid { gap: 10px; margin-bottom: 14px; }.metric-card { padding: 14px; border-radius: 12px; }.metric-card > strong { font-size: 28px; }.metric-card p { font-size: 9px; }.analytics-grid { gap: 14px; margin-bottom: 14px; }.dashboard-card { border-radius: 13px; padding: 16px; }.temperature-main { flex-direction: column; align-items: stretch; }.temperature-number { width: auto; }.temperature-chart { flex: auto; height: 180px; }.climate-metrics strong { font-size: 12px; }.climate-metrics span { font-size: 9px; }.fire-potential { display: block; }.risk-gauge { margin: 14px auto 0; }.risk-explainer, .risk-method { text-align: center; }.risk-explainer { max-width: 230px; margin: 0 auto 12px; }.dashboard-overview .watch-camera .cctv-wall { padding: 16px; }.dashboard-overview .watch-layout, .dashboard-overview .watch-summary { gap: 14px; }.dashboard-overview .watch-summary { grid-template-columns: 1fr; }.menu-popover { right: 0; }.demo-popover { position: fixed; top: 66px; left: 12px; right: 12px; width: auto; } }

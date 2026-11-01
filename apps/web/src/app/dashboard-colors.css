@@ -1,0 +1,65 @@
+:root {
+  --bg: #f2f4f8;
+  --text: #24344c;
+  --muted: #65748a;
+  --line: #e2e7ef;
+  --blue: #3867d6;
+  --blue-soft: #edf2fc;
+}
+.role-app { background: #fff; }
+.app-header { border-bottom-color: #e2e7ef; }
+.workspace-label { color: #718098; }
+.app-sidebar { background: #fff; border-right-color: #e2e7ef; }
+.app-sidebar .sidebar-caption { color: #8995a7; }
+.app-sidebar button { color: #64738a; }
+.app-sidebar button:hover { background: #f5f7fb; }
+.app-sidebar button.active { background: #edf2fc; color: #3867d6; box-shadow: inset 3px 0 #6d8ee2; }
+.forest-note { background: linear-gradient(140deg, #6683bb, #486696); box-shadow: none; }
+.forest-note > span, .forest-note p { opacity: 1; color: #e4ebf6; }
+.metric-card { border-color: #e1e7f0; box-shadow: 0 3px 12px #27446e05; }
+.metric-card > div { color: #3a4c66; }
+.metric-card > strong { color: #263a58; }
+.metric-card p, .metric-card > strong small { color: #718199; }
+.metric-card svg { width: 27px; height: 27px; padding: 5px; border-radius: 7px; background: #ffffffbf; }
+.metric-card.blue { background: linear-gradient(110deg, #fff, #edf3ff); --accent: #5078cf; }
+.metric-card.orange { background: linear-gradient(110deg, #fff, #fff5e8); --accent: #b88645; }
+.metric-card.green { background: linear-gradient(110deg, #fff, #edf7f2); --accent: #4b967e; }
+.metric-card.purple { background: linear-gradient(110deg, #fff, #f3effb); --accent: #9272ba; }
+.dashboard-overview .watch-camera, .dashboard-overview .watch-inbox, .dashboard-card { border-color: #e0e6ef; box-shadow: 0 3px 16px #27446e04; }
+.dashboard-overview .inbox-heading { background: #fafbfe; border-bottom: 1px solid #e7ecf4; }
+.dashboard-overview .inbox-heading > span { color: #5879ba; background: #edf2fc; }
+.dashboard-overview .inbox-empty h3 { color: #40536f; }
+.dashboard-overview .inbox-empty p, .dashboard-overview .inbox-note { color: #738198; }
+.dashboard-overview .cctv-controls button { color: #647691; background: #f7f9fd; box-shadow: inset 0 0 0 1px #e1e7f2; }
+.dashboard-overview .cctv-controls button:hover, .dashboard-overview .cctv-controls button.active { background: #edf2fc; color: #3867d6; }
+.dashboard-overview .video-empty { background: #edf1f7; color: #70829e; }
+.temperature-card { background: #fff; }
+.card-heading h2 { color: #334865; }
+.card-heading p, .temperature-number > span { color: #78879e; }
+.temperature-number > strong { color: #3d5e96; }
+.temperature-number strong small { color: #8599b8; }
+.temperature-number .metric-caption { background: #edf5f0; color: #52816c; }
+.range-switch { background: #f0f3f9; }
+.range-switch button { color: #7a8ba5; }
+.range-switch button[aria-pressed="true"] { background: #fff; color: #4d72bf; box-shadow: 0 1px 5px #27446e12; }
+.climate-metrics { background: #fafbfe; border-color: #e5eaf3; }
+.climate-metrics > div { border-right-color: #e1e7f2; }
+.climate-metrics svg { color: #7290c4; }
+.climate-metrics span, .chart-foot { color: #7c8ca5; }
+.climate-metrics strong { color: #415b80; }
+.fire-potential.low { --risk-color: #56a88b; background: linear-gradient(150deg, #f4faf7, #fff 60%); border-color: #ddeae3; }
+.fire-potential.medium { --risk-color: #c99b56; background: linear-gradient(150deg, #fffaf1, #fff 60%); border-color: #eee4d3; }
+.fire-potential.high { --risk-color: #cc786c; background: linear-gradient(150deg, #fff5f2, #fff 60%); border-color: #efddd7; }
+.risk-gauge strong { color: #344c64; }
+.risk-gauge small, .risk-gauge span, .risk-explainer { color: #7b8b9d; }
+.dashboard-overview .weather-summary { background: linear-gradient(155deg, #eaf2ff, #f8fbff 55%, #fff); color: #344d72; border-color: #dce5f3; box-shadow: 0 3px 16px #27446e04; }
+.dashboard-overview .weather-heading h2 { color: #3d567d; }
+.dashboard-overview .weather-heading > span { color: #7a8fab; }
+.dashboard-overview .weather-current > strong { color: #41669e; }
+.dashboard-overview .weather-current > span { color: #587293; }
+.dashboard-overview .weather-current small, .dashboard-overview .weather-metrics dt, .dashboard-overview .weather-hours time, .dashboard-overview .weather-hours small { color: #798ca6; }
+.dashboard-overview .weather-metrics dd, .dashboard-overview .weather-hours strong { color: #405c80; }
+.dashboard-overview .weather-hours { border-top-color: #dfe7f3; }
+.dashboard-overview .weather-source, .dashboard-overview .weather-message { color: #788ca9; }
+.weather-artwork { filter: drop-shadow(0 3px 7px #83a3c516); }
+@media (max-width: 700px) { .app-sidebar { background: #fff; border-bottom-color: #e1e7f0; }.app-sidebar button.active { background: #edf2fc; color: #3867d6; } }
