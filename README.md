@@ -14,9 +14,9 @@ powershell -ExecutionPolicy Bypass -File scripts/setup.ps1
 
 Script membuat `.env` bila belum ada dengan service token acak, membangun empat service, mengunduh model dan footage publik, menyiapkan MP4, menjalankan migrasi/seed, lalu menunggu health check. Unduhan footage sekitar 29 MB; model sekitar 44 MB. Proses pertama dapat memakan beberapa menit. Unduhan menggunakan resume dan checksum.
 
-Buka **http://localhost:3000**. OpenAPI: **http://localhost:8000/docs**. PostgreSQL dan worker tidak memublikasikan port. Frontend/backend hanya terikat ke loopback.
+Buka **http://localhost:3000** untuk landing page, lalu pilih **Buka Dashboard**, atau akses langsung **http://localhost:3000/dashboard**. OpenAPI: **http://localhost:8000/docs**. PostgreSQL dan worker tidak memublikasikan port. Frontend/backend hanya terikat ke loopback.
 
-Aplikasi langsung membuka dashboard **Operator**. Gunakan menu peran di navbar untuk beralih ke **Petugas Damkar** atau **Pantauan Drone**. Pilihan peran berlaku untuk tab tersebut dan belum menggunakan autentikasi akun.
+Route `/dashboard` langsung membuka dashboard **Operator**. Gunakan menu peran di navbar untuk beralih ke **Petugas Damkar** atau **Pantauan Drone**. Pilihan peran berlaku untuk tab tersebut dan belum menggunakan autentikasi akun. Landing page menggunakan aset lokal tanpa polling backend; animasi drone 3D diganti poster ketika WebGL tidak tersedia atau pengunjung memilih pengurangan gerakan.
 
 - **Operator:** halaman **Pantauan** berisi satu kamera utama dan antrean kejadian. Buka peringatan untuk mengikuti tahap **Periksa > Bantuan > Penanganan > Selesai**. Periksa bukti, klik **Lanjutkan penanganan**, pilih tugas drone, lalu **Setujui & kirim drone**. Alternatif **Tangani dengan regu** tersedia tanpa mengirim drone. Penugasan drone dan regu tetap terpisah.
 - **Petugas Damkar:** pilih regu, buka tugas aktif, lalu ikuti satu tombol tindakan berikutnya: terima, berangkat, tiba, dan selesai. Peta dan detail lokasi dibuka saat dibutuhkan.
