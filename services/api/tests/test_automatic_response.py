@@ -12,7 +12,7 @@ def candidate(client):
 def advance(client):
     with client.db_session.begin() as session:
         session.get(DemoState, 1).paused = False
-    tick(1)
+    tick(3)  # Advance three wall seconds at the default 1x speed.
 
 
 def test_camera_bearing_estimate_stays_explicitly_uncertain(client):

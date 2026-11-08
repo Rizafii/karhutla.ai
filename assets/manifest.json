@@ -64,6 +64,17 @@
   },
   {
     "kind": "source_clip",
+    "id": "1psk94hiEVNVbT9_iR79KDLcelJifW6fb",
+    "name": "payload-drop",
+    "source": "https://drive.google.com/file/d/1psk94hiEVNVbT9_iR79KDLcelJifW6fb/view",
+    "url": "https://drive.google.com/uc?export=download&id=1psk94hiEVNVbT9_iR79KDLcelJifW6fb",
+    "path": "assets/source/drive/payload-drop.mp4",
+    "authors": "Video supplied by project owner",
+    "license": "Supplied for project use; original license unspecified",
+    "sha256": "ade1bec25aa1bb0149f4c9fc123f6537f08c5b1f4592fd342701395284b6168a"
+  },
+  {
+    "kind": "source_clip",
     "id": 4124178,
     "name": "forest-east",
     "source": "https://www.pexels.com/video/4124178/",
@@ -215,20 +226,9 @@
     "coordinate_note": "Reference footage is not recorded at the demo coordinates. Drone telemetry and scanning remain virtual."
   },
   {
-    "kind": "source_clip",
-    "id": "1psk94hiEVNVbT9_iR79KDLcelJifW6fb",
-    "name": "payload-drop",
-    "source": "https://drive.google.com/file/d/1psk94hiEVNVbT9_iR79KDLcelJifW6fb/view",
-    "url": "https://drive.google.com/uc?export=download&id=1psk94hiEVNVbT9_iR79KDLcelJifW6fb",
-    "path": "assets/source/drive/payload-drop.mp4",
-    "authors": "Video supplied by project owner",
-    "license": "Supplied for project use; original license unspecified",
-    "sha256": "ade1bec25aa1bb0149f4c9fc123f6537f08c5b1f4592fd342701395284b6168a"
-  },
-  {
     "kind": "prepared_clip",
     "path": "assets/videos/payload-drop.mp4",
-    "sha256": "b0dc6cf4e79b11378cf621fe7ee164f57c4b7052d24aca8aa1019dd08c45b9f3",
+    "sha256": "d8b333bcec9b47e591dd4bd50bcb1be6aef6996c7a8f48ffc59b890cef0b6fdb",
     "source": "https://drive.google.com/file/d/1psk94hiEVNVbT9_iR79KDLcelJifW6fb/view",
     "sources": [
       "https://drive.google.com/file/d/1psk94hiEVNVbT9_iR79KDLcelJifW6fb/view"
@@ -236,7 +236,7 @@
     "license": "Supplied for project use; original license unspecified",
     "license_url": null,
     "authors": "Video supplied by project owner",
-    "changes": "Full supplied clip; resized to 960x540, 25 fps, audio removed, H.264 MP4.",
+    "changes": "Full supplied clip; Resized to 960x540, 25 fps, audio removed, H.264 MP4.",
     "coordinate_note": "Reference footage is not recorded at the demo coordinates. Drone telemetry and scanning remain virtual."
   }
 ]

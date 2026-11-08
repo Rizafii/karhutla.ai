@@ -88,13 +88,13 @@ async def lifespan(app):
 
 app = FastAPI(title="KARHUTLA.AI", version="1.0.0", lifespan=lifespan,
               description="Local operator command center. Drone and team movement are virtual. AI and manual simulation provenance are explicit.")
-app.add_middleware(TrustedHostMiddleware, allowed_hosts=["localhost", "127.0.0.1", "backend", "testserver"])
-app.add_middleware(CORSMiddleware, allow_origins=["http://localhost:3000", "http://127.0.0.1:3000"], allow_methods=["GET", "POST", "PATCH"], allow_headers=["Content-Type"])
+app.add_middleware(TrustedHostMiddleware, allowed_hosts=settings.allowed_hosts)
+app.add_middleware(CORSMiddleware, allow_origins=settings.allowed_origins, allow_methods=["GET", "POST", "PATCH"], allow_headers=["Content-Type"])
 
 
 @app.middleware("http")
 async def local_origin(request: Request, call_next):
-    if request.method not in ("GET", "HEAD", "OPTIONS") and request.headers.get("origin") not in (None, "http://localhost:3000", "http://127.0.0.1:3000"):
+    if request.method not in ("GET", "HEAD", "OPTIONS") and request.headers.get("origin") not in (None, *settings.allowed_origins):
         return JSONResponse({"detail": "Origin tidak diizinkan untuk tindakan operasional"}, status_code=403)
     return await call_next(request)
 
@@ -117,7 +117,7 @@ def rows(session, cls):
 def health():
     with Session() as session:
         session.execute(text("select 1"))
-    return {"status": "ok", "access": "localhost_only", "demo_mode": settings.demo_mode}
+    return {"status": "ok", "access": "reverse_proxy", "demo_mode": settings.demo_mode}
 
 
 @app.get("/api/bootstrap", response_model=BootstrapResponse)
@@ -537,7 +537,7 @@ def validated(request: DetectionInput):
 
 @app.websocket("/ws/events")
 async def events(socket: WebSocket):
-    if socket.headers.get("origin") not in (None, "http://localhost:3000", "http://127.0.0.1:3000"):
+    if socket.headers.get("origin") not in (None, *settings.allowed_origins):
         await socket.close(code=1008)
         return
     await socket.accept()

@@ -38,6 +38,8 @@ def test_seed_and_bootstrap(client):
     assert {camera['id'] for camera in data['cameras']} == {'CAM-001', 'CAM-002', 'CAM-003', 'CAM-004'}
     assert len(data['response_units'])==2 and len(data['drones'])==1
     assert data['incidents']==[]
+    assert settings.simulation_speed == 1
+    assert data['demo']['speed'] == 1
 
 
 def test_manual_provenance_and_duplicate_suppression(client):
@@ -124,7 +126,7 @@ def test_full_mission_payload_return_report(client):
     path=f"/api/missions/{mission['id']}"
     client.post(path+'/approve'); client.post(path+'/launch')
     initial=client.get('/api/drones/DRONE-01').json()['battery_pct']
-    for _ in range(11): mission_tick(client)
+    for _ in range(90): mission_tick(client)
     assert client.get(path).json()['status']=='on_site'
     assert client.get('/api/drones/DRONE-01').json()['battery_pct']<initial
     payload={'liters':5,'command_id':'test-release-command'}
@@ -133,7 +135,7 @@ def test_full_mission_payload_return_report(client):
     assert client.get('/api/drones/DRONE-01').json()['payload_l']==0
     assert client.get(f"/api/incidents/{incident['id']}").json()['status']=='in_progress'
     client.post(path+'/return')
-    for _ in range(11): mission_tick(client)
+    for _ in range(90): mission_tick(client)
     assert client.get(path).json()['status']=='completed'
     drone=client.get('/api/drones/DRONE-01').json()
     assert drone['status']=='available' and drone['mission_id'] is None

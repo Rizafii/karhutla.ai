@@ -9,7 +9,7 @@ def test_operator_authorized_automatic_payload_never_resolves_incident(client):
     with client.db_session.begin() as session:
         session.get(DemoState, 1).paused = False
     for _ in range(120):
-        tick(1)
+        tick(3)  # Advance three wall seconds at the default 1x speed.
         current = client.get(f"/api/missions/{mission['id']}").json()
         if current['status'] == 'completed':
             break

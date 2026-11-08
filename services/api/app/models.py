@@ -167,7 +167,7 @@ class DemoState(Base):
     epoch: Mapped[int] = mapped_column(Integer, default=1)
     status: Mapped[str] = mapped_column(String(30), default="idle")
     mode: Mapped[str] = mapped_column(String(30), default="ai")
-    speed: Mapped[int] = mapped_column(Integer, default=8)
+    speed: Mapped[int] = mapped_column(Integer, default=1)
     paused: Mapped[bool] = mapped_column(Boolean, default=False)
     worker: Mapped[dict] = mapped_column(JSON, default=dict)
     worker_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
