@@ -2,7 +2,7 @@
 export type Assign = {"unit_id": string};
 export type AutomaticResponse = {"notes"?: string; "mission_type"?: "reconnaissance" | "suppression_simulation"};
 export type BootstrapResponse = {"cameras": Array<CameraResponse>; "incidents": Array<IncidentResponse>; "response_units": Array<ResponseUnitResponse>; "dispatches": Array<DispatchResponse>; "drones": Array<DroneResponse>; "missions": Array<MissionResponse>; "activities": Array<EventResponse>; "demo": DemoStateResponse; "demo_enabled": boolean; "worker_fresh": boolean};
-export type CameraEdit = {"source_type"?: "mp4" | "rtsp" | "webcam"; "source_config": Record<string, string | number>; "heading"?: number; "fov"?: number; "range_m"?: number};
+export type CameraEdit = {"source_type"?: "mp4"; "source_config": Record<string, string | number>; "heading"?: number; "fov"?: number; "range_m"?: number};
 export type CameraHeartbeat = {"camera_id": string; "connection_status": "connected" | "reconnecting" | "unavailable" | "paused"; "ai_status": "ready" | "unavailable" | "processing" | "error" | "paused"; "last_frame_at"?: string | null; "last_inference_at"?: string | null; "error"?: string | null};
 export type CameraResponse = {"name": string; "latitude": number; "longitude": number; "heading": number; "fov": number; "range_m": number; "source_type": string; "source_config": Record<string, unknown>; "connection_status": string; "ai_status": string; "last_frame_at": string | null; "last_inference_at": string | null; "last_detection_at": string | null; "error": string | null; "id": string; "created_at": string; "updated_at": string};
 export type DemoControl = {"paused"?: boolean | null; "speed"?: 1 | 5 | 8 | 10 | null};

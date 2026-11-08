@@ -5,6 +5,7 @@ import { ArrowLeft } from "lucide-react";
 import { useOperations } from "@/lib/use-operations";
 import { label, time } from "@/lib/api";
 import { locationLabel } from "@/lib/location";
+import { DroneHUD } from "./drone-hud";
 import { DronePOV } from "./drone-pov";
 import { Button } from "./ui/button";
 
@@ -14,8 +15,8 @@ const eventNames: Record<string, string> = {
   "mission.started": "Drone berangkat", "mission.arrived": "Tiba di area target",
   "incident.location_refined": "Perkiraan lokasi diperbarui", "mission.completed": "Drone kembali",
   "mission.automation_authorized": "Perjalanan otomatis diizinkan", "mission.approved": "Misi disetujui",
-  "mission.created": "Misi dibuat", "mission.scan_completed": "Pemindaian virtual selesai",
-  "mission.payload_released": "Air virtual dilepaskan", "mission.abort_requested": "Penghentian diminta", "mission.aborted": "Misi dihentikan",
+  "mission.created": "Misi dibuat", "mission.scan_completed": "Pemindaian selesai",
+  "mission.payload_released": "Air dilepaskan", "mission.abort_requested": "Penghentian diminta", "mission.aborted": "Misi dihentikan",
 };
 
 export function DronePanel({ onIncident }: { onIncident: (id: string) => void }) {
@@ -33,14 +34,14 @@ export function DronePanel({ onIncident }: { onIncident: (id: string) => void })
     {!connected && <p className="availability-note" role="status">Menghubungkan ulang ke layanan pemantauan.</p>}
     {incident && <button className="text-button back-link" onClick={() => onIncident(incident.id)}><ArrowLeft size={17} />Kembali ke penanganan</button>}
     <section className="drone-view">
-      <div className="drone-video"><DronePOV drone={drone} mission={mission} paused={data.demo.paused} speed={data.demo.speed} /><div className="video-labels"><span>{drone.name}</span><span>Rekaman referensi</span></div>{(!flying || data.demo.paused) && <div className="drone-idle"><h2>{headline}</h2><p>{data.demo.paused && active ? "Lanjutkan pemantauan dari operator." : active ? "Menunggu pengiriman dari operator." : mission ? "Hasil penanganan tetap diperiksa oleh operator." : "Belum ada misi yang berjalan."}</p></div>}</div>
-      <div className="drone-caption"><span><i className={active ? "online-dot" : "offline-dot"} />{headline}</span><span>{mission?.automatic ? "Berjalan otomatis" : mission ? "Diarahkan operator" : "Drone virtual"}</span></div>
+      <div className="drone-video"><DronePOV drone={drone} mission={mission} paused={data.demo.paused} speed={data.demo.speed} /><DroneHUD drone={drone} mission={mission} paused={data.demo.paused} />{(!flying || data.demo.paused) && <div className="drone-idle"><h2>{headline}</h2><p>{data.demo.paused && active ? "Lanjutkan pemantauan dari operator." : active ? "Menunggu pengiriman dari operator." : mission ? "Hasil penanganan tetap diperiksa oleh operator." : "Belum ada misi yang berjalan."}</p></div>}</div>
+      <div className="drone-caption"><span><i className={active ? "online-dot" : "offline-dot"} />{headline}</span><span>{mission?.automatic ? "Berjalan otomatis" : mission ? "Diarahkan operator" : "Siaga"}</span></div>
     </section>
     <div className="drone-details">
-      <details className="disclosure"><summary>Detail penerbangan</summary><dl className="metadata"><dt>Tugas</dt><dd>{mission ? mission.mission_type === "reconnaissance" ? "Pindai area" : "Pindai & lepaskan air virtual" : "Belum ada tugas"}</dd><dt>Baterai virtual</dt><dd>{drone.battery_pct.toFixed(1)}%</dd><dt>Air virtual</dt><dd>{drone.payload_l.toFixed(1)} L</dd><dt>Jarak tersisa</dt><dd>{flying && mission ? `${mission.distance_m.toFixed(0)} m` : "—"}</dd><dt>Perkiraan tiba simulasi</dt><dd>{flying && mission ? `${mission.eta_s.toFixed(0)} detik` : "—"}</dd><dt>Posisi virtual</dt><dd>{drone.latitude.toFixed(5)}, {drone.longitude.toFixed(5)}</dd><dt>Ketinggian virtual</dt><dd>{drone.altitude_m.toFixed(0)} m</dd><dt>Kecepatan simulasi</dt><dd>{data.demo.speed}×</dd></dl></details>
+      <details className="disclosure"><summary>Detail penerbangan</summary><dl className="metadata"><dt>Tugas</dt><dd>{mission ? mission.mission_type === "reconnaissance" ? "Pindai area" : "Pindai & lepaskan air" : "Belum ada tugas"}</dd><dt>Baterai</dt><dd>{drone.battery_pct.toFixed(1)}%</dd><dt>Air</dt><dd>{drone.payload_l.toFixed(1)} L</dd><dt>Jarak tersisa</dt><dd>{flying && mission ? `${mission.distance_m.toFixed(0)} m` : "—"}</dd><dt>Perkiraan tiba</dt><dd>{flying && mission ? `${mission.eta_s.toFixed(0)} detik` : "—"}</dd><dt>Posisi</dt><dd>{drone.latitude.toFixed(5)}, {drone.longitude.toFixed(5)}</dd><dt>Ketinggian</dt><dd>{drone.altitude_m.toFixed(0)} m</dd><dt>Kecepatan pemutaran</dt><dd>{data.demo.speed}×</dd></dl></details>
       <details className="disclosure"><summary>Lihat posisi di peta</summary><div className="map-area drone-map"><MonitoringMap data={data} onLocation={() => {}} /></div>{incident && <p className="muted small">{locationLabel(incident)}{incident.location_uncertainty_m !== null ? ` · radius asumsi ±${incident.location_uncertainty_m.toFixed(0)} m` : ""}</p>}</details>
       <details className="disclosure"><summary>Aktivitas misi</summary><div className="drone-event-list">{events.length ? events.map(event => <div key={event.event_id}><time>{time(event.timestamp)}</time><span>{eventNames[event.type] || "Misi diperbarui"}</span></div>) : <p className="muted">Belum ada aktivitas misi.</p>}</div></details>
-      <details className="disclosure"><summary>Sumber video</summary><p className="muted small">Rekaman <a href="https://www.pexels.com/video/aerial-view-of-wildfire-with-heavy-smoke-29702252/" target="_blank" rel="noreferrer">hutan dan kebakaran</a> serta <a href="https://www.pexels.com/video/aerial-view-of-forest-fire-battled-by-helicopter-29703477/" target="_blank" rel="noreferrer">helikopter pemadam</a> oleh 8K / Pexels. Video ini bukan kamera drone nyata dan bukan lokasi demo.</p></details>
+      <details className="disclosure"><summary>Kredit visual</summary><p className="muted small">Rekaman <a href="https://www.pexels.com/video/aerial-view-of-wildfire-with-heavy-smoke-29702252/" target="_blank" rel="noreferrer">hutan dan kebakaran</a> serta <a href="https://drive.google.com/file/d/1psk94hiEVNVbT9_iR79KDLcelJifW6fb/view" target="_blank" rel="noreferrer">pelepasan air</a> dari video yang disediakan untuk proyek. Rekaman hutan: 8K / Pexels.</p></details>
     </div>
   </main>;
 }

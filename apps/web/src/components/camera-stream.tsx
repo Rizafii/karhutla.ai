@@ -18,12 +18,12 @@ export function CameraStream({
   useEffect(() => {
     setFailed(false);
     setRetry((n) => n + 1);
-  }, [camera.id, camera.connection_status, camera.ai_status, annotated]);
+  }, [camera.id, annotated]);
   useEffect(() => {
     if (
       !failed ||
-      camera.connection_status !== "connected" ||
-      (annotated && camera.ai_status !== "ready")
+      !["connected", "paused"].includes(camera.connection_status) ||
+      (annotated && !["ready", "paused"].includes(camera.ai_status))
     )
       return;
     const timer = setTimeout(() => {

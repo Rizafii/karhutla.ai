@@ -1,4 +1,5 @@
 import asyncio
+from pathlib import Path
 import pytest
 from app import main
 from app.models import Camera
@@ -34,3 +35,37 @@ def test_disconnected_camera_does_not_serve_a_stale_frame(client, tmp_path):
     frames.mkdir()
     (frames / 'CAM-004.jpg').write_bytes(b'stale')
     assert client.get('/api/cameras/CAM-004/stream.mjpg').status_code == 503
+
+
+@pytest.mark.parametrize('failure', ['missing', 'unavailable', 'empty'])
+def test_stream_recovers_after_transient_frame_read_failure(client, tmp_path, monkeypatch, failure):
+    with client.db_session.begin() as session:
+        session.get(Camera, 'CAM-004').connection_status = 'connected'
+    frames = tmp_path / 'frames'
+    frames.mkdir()
+    path = frames / 'CAM-004.jpg'
+    path.write_bytes(b'first-frame')
+    reads = 0
+
+    def read_frame(self):
+        nonlocal reads
+        assert self == path
+        reads += 1
+        if reads == 1:
+            if failure == 'missing':
+                raise FileNotFoundError()
+            if failure == 'unavailable':
+                raise OSError(61, 'No data available')
+            return b''
+        return b'recovered-frame'
+
+    monkeypatch.setattr(Path, 'read_bytes', read_frame)
+
+    async def recover():
+        response = await main.stream('CAM-004')
+        chunk = await asyncio.wait_for(anext(response.body_iterator), timeout=2)
+        await response.body_iterator.aclose()
+        return chunk
+
+    assert asyncio.run(recover()).endswith(b'recovered-frame\r\n')
+    assert reads == 2

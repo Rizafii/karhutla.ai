@@ -1,11 +1,12 @@
 "use client";
+import { EvidenceImage } from "./evidence-image";
 
 import { useRef, useState } from "react";
 import dynamic from "next/dynamic";
 import { useQueryClient } from "@tanstack/react-query";
 import { CheckCircle2 } from "lucide-react";
 import { useOperations } from "@/lib/use-operations";
-import { API, request, time } from "@/lib/api";
+import { request, time } from "@/lib/api";
 import { locationLabel } from "@/lib/location";
 import { Button } from "./ui/button";
 import { Status } from "./operator-support";
@@ -55,7 +56,7 @@ export function FieldPanel() {
         {incident.notes && <blockquote className="task-note"><span>Catatan operator</span>{incident.notes}</blockquote>}
         {next && <Button disabled={busy} onClick={() => update(assignment.id, next.status)}>{busy ? "Menyimpan…" : next.title}</Button>}
       </div>
-      {incident.evidence_path && <img className="task-evidence" alt="Gambar indikasi dari kamera pemantauan" src={`${API}/api/evidence/${incident.evidence_path.replace(/^evidence\//, "")}`} />}
+      {incident.evidence_path && <EvidenceImage key={incident.evidence_path} className="task-evidence" alt="Gambar indikasi dari kamera pemantauan" path={incident.evidence_path} />}
       <details className="disclosure task-details"><summary>Lokasi & detail tugas</summary><div className="map-area field-map"><MonitoringMap data={data} onLocation={() => {}} /></div><dl className="metadata"><dt>Lokasi perkiraan</dt><dd>{incident.latitude !== null && incident.longitude !== null ? `${incident.latitude.toFixed(5)}, ${incident.longitude.toFixed(5)}` : "Belum ditentukan"}</dd><dt>Sumber lokasi</dt><dd>{locationLabel(incident)}</dd>{incident.location_uncertainty_m !== null && <><dt>Radius asumsi simulasi</dt><dd>±{incident.location_uncertainty_m.toFixed(0)} m</dd></>}<dt>Sumber kejadian</dt><dd>{incident.provenance === "ai" ? "Deteksi AI" : "Simulasi manual"}</dd></dl></details>
     </article> : <div className="empty-state field-empty"><h2>{unit ? "Siaga. Belum ada tugas baru." : "Regu belum tersedia"}</h2><p>{unit ? "Tugas dari operator akan muncul di sini." : "Regu yang disiapkan akan tampil di halaman ini."}</p></div>}
   </main>;

@@ -7,8 +7,10 @@ Panduan ini mengikuti perombakan UI terbaru. Aplikasi, Docker, build, typecheck,
 1. Saat siap menjalankan aplikasi, gunakan petunjuk setup di [README.md](README.md). Model dan video perlu tersedia untuk mode AI.
 2. Buka http://localhost:3000, lalu pilih **Buka Dashboard**. Akses langsung tersedia di http://localhost:3000/dashboard dan membuka dashboard **Operator**. Gunakan menu peran di navbar untuk beralih ke **Petugas Damkar** atau **Pantauan Drone**.
 3. Menu peran di kanan atas menyediakan perpindahan peran dan **Pengaturan**. Kontrol simulasi serta kecepatannya tersedia melalui menu **Demo** di navbar.
-4. Suara mati saat aplikasi dibuka. Ikon lonceng dan antrean kejadian tetap menampilkan peringatan. Aktivasi suara membutuhkan klik serta konfirmasi.
-5. Video menggunakan rekaman referensi, koordinat merupakan lokasi simulasi, dan regu serta drone bersifat virtual.
+4. Alarm suara aktif secara default. Klik atau gunakan keyboard di dashboard untuk mengaktifkan audio sesuai aturan browser. Tombol suara dapat menyenyapkan alarm; ikon lonceng dan antrean kejadian tetap menampilkan peringatan.
+5. Sumber pemantauan hanya video MP4 lokal yang diputar ulang. Video menggunakan rekaman referensi, koordinat merupakan lokasi simulasi, dan regu serta drone bersifat virtual.
+
+Panduan penggunaan tampil saat dashboard pertama dibuka pada setiap tab. Gunakan **Berikutnya** untuk mengikuti enam langkah atau **Lewati panduan** untuk langsung menjelajah. Ikon bantuan dan menu peran > **Panduan penggunaan** dapat membukanya kembali. Panduan tidak memulai pemantauan atau membuat kejadian.
 
 ## Alur utama
 

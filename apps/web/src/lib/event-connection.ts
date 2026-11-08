@@ -30,6 +30,7 @@ export function connectEvents(
     let syncing = true;
     const buffered: Event[] = [];
     active.onopen = () => {
+      if (disposed || socket !== active) { active.close(); return; }
       attempt = 0;
       callbacks.connection(true);
       heartbeat = setInterval(() => {
@@ -38,7 +39,7 @@ export function connectEvents(
       callbacks
         .resync()
         .then(() => {
-          if (disposed || socket !== active) return;
+          if (disposed || socket !== active || active.readyState !== 1) return;
           syncing = false;
           buffered.forEach(deliver);
           buffered.length = 0;
@@ -46,6 +47,7 @@ export function connectEvents(
         .catch(() => active.close());
     };
     active.onmessage = (message) => {
+      if (disposed || socket !== active) return;
       let event: Event;
       try {
         event = JSON.parse(message.data);
@@ -58,6 +60,7 @@ export function connectEvents(
       else deliver(event);
     };
     active.onclose = () => {
+      if (socket !== active) return;
       callbacks.connection(false);
       clearInterval(heartbeat);
       if (!disposed)

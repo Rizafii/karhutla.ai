@@ -2,5 +2,5 @@
 
 - `forest.mp4` dan `forest-poster.webp`: potongan serta frame footage hutan oleh **8K / Pexels**, https://www.pexels.com/video/3859447/, digunakan berdasarkan https://www.pexels.com/license/. Sumber asli dan checksum tercatat di `assets/footage-sources.json` pada root proyek.
 - `drone-poster.webp`: render model quadcopter ilustratif buatan proyek dari `src/components/landing/drone-model.ts`. Bukan representasi perangkat yang terhubung ke sistem.
-- `dashboard.webp`: tangkapan dashboard aplikasi lokal; data pada gambar adalah kondisi saat tangkapan dibuat, bukan data langsung.
+- `dashboard.webp`: arsip tangkapan dashboard aplikasi lokal; tidak lagi ditampilkan pada landing page. Bagian Platform memakai `forest-poster.webp` dan kartu penjelasan fitur agar tidak menampilkan kondisi layanan dari tangkapan lama.
 - Referensi arah visual: https://drone.riotters.com/. Model, kode, dan aset branding Riotters tidak disalin.

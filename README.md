@@ -16,13 +16,15 @@ Script membuat `.env` bila belum ada dengan service token acak, membangun empat 
 
 Buka **http://localhost:3000** untuk landing page, lalu pilih **Buka Dashboard**, atau akses langsung **http://localhost:3000/dashboard**. OpenAPI: **http://localhost:8000/docs**. PostgreSQL dan worker tidak memublikasikan port. Frontend/backend hanya terikat ke loopback.
 
+Saat pertama membuka dashboard pada setiap tab, panduan enam langkah memperkenalkan pemantauan, pemeriksaan bukti, bantuan, pergantian peran, dan laporan. Panduan bisa dilewati atau dibuka lagi melalui ikon bantuan maupun menu peran > **Panduan penggunaan**.
+
 Route `/dashboard` langsung membuka dashboard **Operator**. Gunakan menu peran di navbar untuk beralih ke **Petugas Damkar** atau **Pantauan Drone**. Pilihan peran berlaku untuk tab tersebut dan belum menggunakan autentikasi akun. Landing page menggunakan aset lokal tanpa polling backend; animasi drone 3D diganti poster ketika WebGL tidak tersedia atau pengunjung memilih pengurangan gerakan.
 
 - **Operator:** halaman **Pantauan** berisi satu kamera utama dan antrean kejadian. Buka peringatan untuk mengikuti tahap **Periksa > Bantuan > Penanganan > Selesai**. Periksa bukti, klik **Lanjutkan penanganan**, pilih tugas drone, lalu **Setujui & kirim drone**. Alternatif **Tangani dengan regu** tersedia tanpa mengirim drone. Penugasan drone dan regu tetap terpisah.
 - **Petugas Damkar:** pilih regu, buka tugas aktif, lalu ikuti satu tombol tindakan berikutnya: terima, berangkat, tiba, dan selesai. Peta dan detail lokasi dibuka saat dibutuhkan.
 - **Pantauan Drone:** video utama dan status perjalanan. Detail penerbangan, peta, aktivitas, dan sumber rekaman tersedia dalam panel yang dapat dibuka. Tombol **Kembali ke penanganan** membuka kejadian terkait. Telemetri dan pemindaian lokasi tetap simulasi.
 
-Kandidat baru masuk antrean Pantauan dan menambah penanda pada ikon lonceng. **Suara mati secara default** dan hanya aktif setelah tombol suara serta konfirmasi pengguna. Membuka peringatan menyenyapkan alarm kejadian tersebut; peringatannya tetap terlihat sampai diperiksa. Deteksi tidak otomatis mengizinkan penerbangan; persetujuan operator tetap wajib.
+Kandidat baru masuk antrean Pantauan dan menambah penanda pada ikon lonceng. **Alarm suara aktif secara default**. Audio mulai tersedia setelah klik atau interaksi keyboard pertama di dashboard sesuai aturan browser; tombol suara dapat menyenyapkannya. Membuka peringatan menyenyapkan alarm kejadian tersebut; peringatannya tetap terlihat sampai diperiksa. Deteksi tidak otomatis mengizinkan penerbangan; persetujuan operator tetap wajib.
 
 Titik awal dihitung dari arah kamera dan jarak asumsi (60% jangkauan), dengan lingkaran ketidakpastian asumsi. Bbox menyesuaikan arah bila lebar frame tersedia. Drone virtual memperbarui titik melalui skenario simulasi berlabel; ini belum merupakan pengukuran GPS atau peningkatan akurasi yang divalidasi. Pilihan lokasi manual operator tidak ditimpa.
 
@@ -67,7 +69,7 @@ Kamera menyatakan video tidak tersedia bila footage belum ada. Worker menyatakan
 ## Yang berfungsi
 
 - Dashboard terang dengan dua tab: **Pantauan** dan **Riwayat**, tanpa sidebar. Kamera dipilih melalui dropdown. Grid seluruh kamera dan peta MapLibre dibuka saat dibutuhkan. Peta memakai basemap OpenStreetMap online dengan kamera, kejadian, regu, drone, dan rute. Kegagalan tile menampilkan pesan dan tombol coba kembali.
-- Konfigurasi MP4/RTSP/webcam, preview MJPEG, frame AI beranotasi, reconnect capture, temporal validation, snapshot evidence, dan deduplikasi kandidat.
+- Konfigurasi video MP4 lokal, preview MJPEG, frame AI beranotasi, reconnect capture, temporal validation, snapshot evidence, dan deduplikasi kandidat.
 - Lifecycle insiden, koordinat perkiraan dari operator, dispatch regu, serta aktivitas tersimpan.
 - Proposal, approval, launch, movement geodesik, reserve baterai, payload virtual, return, abort, dan completion mission.
 - WebSocket, reconnect/resync REST, deduplikasi notifikasi, interpolasi marker, dan history/report JSON serta cetak dari browser.
@@ -88,7 +90,7 @@ Peran Operator langsung membuka **Pantauan**. Pilih kamera melalui dropdown, akt
 
 CAM-003 memakai `normal-east.mp4` ([James Cheney / Pexels](https://www.pexels.com/video/4124178/)); CAM-004 memakai `normal-south.mp4` ([Florian Hillmann / Pexels](https://www.pexels.com/video/12744994/)). Seed menambah CAM-004 tanpa reset database dan memperbarui konfigurasi bawaan lama; sumber kamera kustom dipertahankan.
 
-Pada tahap **Bantuan**, pilihan bawaan **Pindai & lepaskan air** memakai persetujuan eksplisit **Setujui & kirim drone**. Opsi **Pindai area saja** juga tersedia. Pada status `suppression_simulation`, Pantauan Drone memainkan `payload-drop.mp4`: 12 detik awal [helikopter melepas air ke kebakaran hutan, 8K / Pexels](https://www.pexels.com/video/aerial-view-of-forest-fire-battled-by-helicopter-29703477/). Rekaman ini referensi visual; payload dan penerbangan tetap virtual. Pemutaran video tidak mengubah status misi atau menyatakan api padam.
+Pada tahap **Bantuan**, pilihan bawaan **Pindai & lepaskan air** memakai persetujuan eksplisit **Setujui & kirim drone**. Opsi **Pindai area saja** juga tersedia. Pada status `suppression_simulation`, Pantauan Drone memainkan `payload-drop.mp4`: seluruh video pelepasan air yang [disediakan untuk proyek melalui Google Drive](https://drive.google.com/file/d/1psk94hiEVNVbT9_iR79KDLcelJifW6fb/view), sekitar 19 detik. Rekaman ini referensi visual; payload dan penerbangan tetap virtual. Pemutaran video tidak mengubah status misi atau menyatakan api padam.
 
 Kontrol **Mulai pemantauan**, **Jeda**, dan **Lanjutkan** ada di halaman Pantauan. Kecepatan, simulasi manual, ulang demo, reset, dan konfigurasi kamera berada di menu peran kanan atas > **Pengaturan & demo**. Reset dan ulang demo memerlukan konfirmasi. Riwayat membuka kejadian yang belum selesai untuk dilanjutkan, atau laporan kejadian tertutup. Laporan menyediakan **Cetak laporan** dan **Ekspor lainnya > Unduh JSON**.
 
@@ -99,6 +101,16 @@ Untuk menyiapkan hanya tiga video tambahan setelah aset mentah diunduh:
 ```powershell
 docker compose run --rm --no-deps -v "${PWD}/assets:/assets" vision python -m vision.prepare --extras-only
 ```
+
+## Profil server CPU besar
+
+`.env.example` memakai profil awal untuk Dell PowerEdge R730 dengan 2 Xeon E5-2680 v4 (28 core fisik/56 thread) dan sekitar 116 GB RAM: input model 640 px, 12 thread PyTorch/OpenMP/MKL, target 2 inference/detik/kanal, dan jeda loop worker 0,05 detik. Angka ini target konfigurasi, belum diukur pada server sasaran. Pratinjau tetap 5 fps sesuai batas MJPEG saat ini; anotasi tetap maksimal 1 fps. Threshold dan validasi deteksi tetap sama.
+
+Profil ini tidak memakai semua thread logis sekaligus. Bandingkan 8, 12, dan 14 thread di server sasaran saat pengujian diperbolehkan; proses yang berbagi dua soket dan layanan sekolah bisa memiliki titik optimal berbeda. Worker menerapkan ulang pengaturan thread sesudah inisialisasi predictor YOLO, yang dapat menimpa nilai sebelumnya. OpenCV dikonfigurasi sesudah impor model agar nilainya tidak ikut tertimpa.
+
+Pengaturan tambahan yang dibaca worker: `TORCH_NUM_THREADS`, `OPENCV_THREADS`, dan `VISION_LOOP_INTERVAL`. Tanpa pengaturan tambahan tersebut, kode mempertahankan default sebelumnya. Jika `.env` sudah ada, perubahan template tidak menimpanya: salin nilai yang diperlukan secara manual. `SIMULATION_SPEED` menjadi nilai seed awal dan tidak mengganti kecepatan yang sudah tersimpan; ubah melalui menu Demo.
+
+Image vision masih CPU-only. GPU memerlukan perubahan image dan akses GPU pada Compose. Backend dan vision tetap masing-masing satu instance. Akses dari domain server juga memerlukan reverse proxy dan penyesuaian allowlist host/origin di API; mengubah `NEXT_PUBLIC_*` saja belum cukup. URL frontend diterapkan saat build.
 
 ## Model dan sumber video
 
@@ -122,7 +134,7 @@ docker compose logs --tail 50 vision
 
 Adapter memeriksa path lokal, task detection, dan mapping kelas. Model COCO tanpa smoke/fire ditolak. Tidak ada download weights saat startup. Device default CPU; image saat ini menggunakan PyTorch CPU.
 
-Untuk MP4 sendiri: simpan di `assets/videos`, buka **Pengaturan → konfigurasi kamera**, dan isi path `/videos/nama.mp4` pada JSON `normal`/`scenario`. RTSP menggunakan `{"url":"rtsp://..."}`; webcam menggunakan `{"index":0}` dan memerlukan akses device/native setup yang sesuai.
+Untuk MP4 sendiri: simpan di `assets/videos`, buka **Pengaturan → konfigurasi kamera**, dan isi kolom **Video utama** serta **Video skenario** (opsional) dengan path `/videos/nama.mp4`. Sumber pemantauan hanya mendukung file MP4 lokal. Konfigurasi perangkat lama dikembalikan ke video bawaan saat seed startup.
 
 ## Database, reset, dan pemeriksaan
 
@@ -176,6 +188,6 @@ Lihat [ARCHITECTURE.md](ARCHITECTURE.md), [DEMO_GUIDE.md](DEMO_GUIDE.md), dan [T
 - Inference ditargetkan 1 fps/kamera, tetapi CPU sesi ini lebih lambat; UI menampilkan fps total yang diukur. Demo AI telah berjalan end-to-end dengan laju aktual tersebut.
 - Kabut/mist belum diuji memakai fixture yang telah direview. Smoke, visible flame, kondisi normal, dan awan telah diproses pada footage referensi; ini bukan benchmark terkontrol.
 - Pada versi sebelum perombakan UI ini, browser Chromium viewport 1440 pernah digunakan untuk memeriksa tile, alarm AI, dan replay. Hasil tersebut tidak memvalidasi tampilan baru; layout dan interaksi terbaru belum diuji.
-- RTSP/webcam didukung adapter tetapi belum diuji dengan hardware/stream nyata; webcam Docker Windows memerlukan konfigurasi device tambahan.
+- Pemantauan menggunakan rekaman MP4 yang diputar ulang; integrasi perangkat kamera langsung tidak tersedia.
 - Satu backend process dan satu operator lokal. Tidak tersedia login multioperator, deployment internet, geolokasi api presisi, triangulasi, atau navigasi jalan.
 - Saat backend restart dengan drone airborne, simulasi dijeda dan dilanjutkan operator; waktu downtime tidak menjadi pergerakan drone.

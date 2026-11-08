@@ -64,18 +64,6 @@
   },
   {
     "kind": "source_clip",
-    "id": 29703477,
-    "name": "payload-drop",
-    "source": "https://www.pexels.com/video/aerial-view-of-forest-fire-battled-by-helicopter-29703477/",
-    "url": "https://videos.pexels.com/video-files/29703477/12773202_960_540_24fps.mp4",
-    "path": "assets/source/pexels/payload-drop.mp4",
-    "authors": "8K / Pexels",
-    "license": "Pexels License",
-    "license_url": "https://www.pexels.com/license/",
-    "sha256": "dae7e473719e71f319ad52cf0254b44a8fd1fee11769d6fd9798acf9e4d1a018"
-  },
-  {
-    "kind": "source_clip",
     "id": 4124178,
     "name": "forest-east",
     "source": "https://www.pexels.com/video/4124178/",
@@ -227,17 +215,28 @@
     "coordinate_note": "Reference footage is not recorded at the demo coordinates. Drone telemetry and scanning remain virtual."
   },
   {
+    "kind": "source_clip",
+    "id": "1psk94hiEVNVbT9_iR79KDLcelJifW6fb",
+    "name": "payload-drop",
+    "source": "https://drive.google.com/file/d/1psk94hiEVNVbT9_iR79KDLcelJifW6fb/view",
+    "url": "https://drive.google.com/uc?export=download&id=1psk94hiEVNVbT9_iR79KDLcelJifW6fb",
+    "path": "assets/source/drive/payload-drop.mp4",
+    "authors": "Video supplied by project owner",
+    "license": "Supplied for project use; original license unspecified",
+    "sha256": "ade1bec25aa1bb0149f4c9fc123f6537f08c5b1f4592fd342701395284b6168a"
+  },
+  {
     "kind": "prepared_clip",
     "path": "assets/videos/payload-drop.mp4",
-    "sha256": "5bb5a93ee5708033283ea080f4cffcc78dad2456805e3b9b681e3e460bba4bda",
-    "source": "https://www.pexels.com/video/aerial-view-of-forest-fire-battled-by-helicopter-29703477/",
+    "sha256": "b0dc6cf4e79b11378cf621fe7ee164f57c4b7052d24aca8aa1019dd08c45b9f3",
+    "source": "https://drive.google.com/file/d/1psk94hiEVNVbT9_iR79KDLcelJifW6fb/view",
     "sources": [
-      "https://www.pexels.com/video/aerial-view-of-forest-fire-battled-by-helicopter-29703477/"
+      "https://drive.google.com/file/d/1psk94hiEVNVbT9_iR79KDLcelJifW6fb/view"
     ],
-    "license": "Pexels License",
-    "license_url": "https://www.pexels.com/license/",
-    "authors": "8K / Pexels",
-    "changes": "First 12 seconds; Resized to 960x540, 25 fps, audio removed, H.264 MP4.",
+    "license": "Supplied for project use; original license unspecified",
+    "license_url": null,
+    "authors": "Video supplied by project owner",
+    "changes": "Full supplied clip; resized to 960x540, 25 fps, audio removed, H.264 MP4.",
     "coordinate_note": "Reference footage is not recorded at the demo coordinates. Drone telemetry and scanning remain virtual."
   }
 ]

@@ -1,8 +1,10 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { ArrowLeft, Check, Plane, Shield, TriangleAlert } from "lucide-react";
-import { API, label, time } from "@/lib/api";
+import { useQuery } from "@tanstack/react-query";
+import { EvidenceImage } from "./evidence-image";
+import { request, label, time } from "@/lib/api";
 import type { Bootstrap, Incident, Mission } from "@/lib/types";
 import { useWorkspace } from "@/lib/store";
 import { Button } from "./ui/button";
@@ -11,10 +13,17 @@ import { Modal, Provenance, Status, type Actions } from "./operator-support";
 const terminal = ["completed", "cancelled", "aborted", "failed"];
 const finished = ["resolved", "false_alarm", "closed"];
 
-export function IncidentFlow({ incident, data, busy, safely, run, failure, ask, onBack, onDrone }: {
+export function IncidentFlow({ incident: initialIncident, data, busy, safely, run, failure, ask, onBack, onDrone }: {
   incident: Incident; data: Bootstrap; onBack: () => void; onDrone: () => void;
   run: Actions["safely"]; failure: string | null;
 } & Actions) {
+  const { data: detail } = useQuery({
+    queryKey: ["incident", initialIncident.id],
+    queryFn: ({ signal }) => request<Incident>(`/api/incidents/${initialIncident.id}`, undefined, "GET", signal),
+    enabled: initialIncident.provenance === "ai" && !initialIncident.evidence_path,
+    refetchInterval: query => query.state.data?.evidence_path ? false : 2000,
+  });
+  const incident = { ...initialIncident, evidence_path: initialIncident.evidence_path || detail?.evidence_path || null };
   const [teamMode, setTeamMode] = useState(false);
   const [extra, setExtra] = useState<"drone" | "team" | null>(null);
   const workspace = useWorkspace();
@@ -38,7 +47,7 @@ export function IncidentFlow({ incident, data, busy, safely, run, failure, ask, 
     <div className="inline-meta incident-context"><span>{camera?.name || incident.camera_id}</span><span>{time(incident.created_at)} WIB</span><Provenance incident={incident} /></div>
 
     {stage === 0 && <div className="review-layout">
-      <div className="review-evidence">{incident.evidence_path ? <img src={`${API}/api/evidence/${incident.evidence_path.replace(/^evidence\//, "")}`} alt={`Bukti indikasi ${incident.category === "smoke" ? "asap" : "api"}`} /> : <div className="empty-state"><TriangleAlert size={32} /><h2>{incident.provenance === "manual_simulation" ? "Kejadian simulasi manual" : "Gambar belum tersedia"}</h2><p>{incident.provenance === "manual_simulation" ? "Tidak ada gambar deteksi AI untuk kejadian ini." : "Periksa sumber kamera sebelum melanjutkan penanganan."}</p></div>}</div>
+      <div className="review-evidence">{incident.evidence_path ? <EvidenceImage key={incident.evidence_path} path={incident.evidence_path} alt={`Bukti indikasi ${incident.category === "smoke" ? "asap" : "api"}`} /> : <div className="empty-state"><TriangleAlert size={32} /><h2>{incident.provenance === "manual_simulation" ? "Kejadian simulasi manual" : "Gambar belum tersedia"}</h2><p>{incident.provenance === "manual_simulation" ? "Tidak ada gambar deteksi AI untuk kejadian ini." : "Menunggu gambar bukti. Data akan diperbarui otomatis."}</p></div>}</div>
       <div className="review-decision"><span className="eyebrow">{incident.category === "smoke" ? "INDIKASI ASAP" : "INDIKASI API"}</span><h2>Perlu ditangani?</h2><p>Pastikan indikasi pada gambar perlu ditindaklanjuti. Bantuan dipilih pada langkah berikutnya.</p><Button disabled={busy} onClick={() => safely(`/api/incidents/${incident.id}/confirm`, { notes: incident.notes })}>Lanjutkan penanganan </Button><Button variant="ghost" disabled={busy} onClick={() => ask("Tandai bukan kebakaran?", "Hasil pemeriksaan ini akan tersimpan di riwayat.", `/api/incidents/${incident.id}/reject`, { notes: incident.notes })}>Bukan kebakaran</Button></div>
     </div>}
 
@@ -73,7 +82,7 @@ function DroneChoice({ incident, data, busy, safely }: { incident: Incident; dat
   return <><h2>Kirim bantuan dari udara</h2><p className="muted">Pilih tugas drone virtual untuk kejadian ini.</p><fieldset className="response-options"><legend className="sr-only">Tugas drone</legend>{[
     { value: "suppression_simulation", title: "Pindai & lepaskan air", text: "Memindai lokasi dan melepas air virtual." },
     { value: "reconnaissance", title: "Pindai area saja", text: "Memeriksa perkiraan lokasi dari udara." },
-  ].map(option => <label key={option.value} className={type === option.value ? "selected" : ""}><input type="radio" name={`drone-task-${incident.id}`} value={option.value} checked={type === option.value} disabled={busy} onChange={() => setType(option.value)} /><span><strong>{option.title}</strong><small>{option.text}</small></span></label>)}</fieldset><p className="permission-copy">Dengan menyetujui, kamu mengizinkan drone virtual terbang, memindai{type === "suppression_simulation" ? ", melepas air virtual" : ""}, lalu pulang otomatis. Lokasi dan penerbangan merupakan simulasi.{type === "suppression_simulation" ? " Video pelepasan air memakai rekaman helikopter referensi." : ""}</p>{!available && <p className="inline-warning">Drone belum siap atau sedang digunakan. Kamu bisa menugaskan regu.</p>}{available && needsWater && <p className="inline-warning">Air virtual habis. Pilih pindai area saja atau tugaskan regu.</p>}<Button className="full-width" disabled={busy || !available || needsWater} onClick={() => safely(`/api/incidents/${incident.id}/respond`, { notes: incident.notes, mission_type: type })}>{busy ? "Mengirim…" : "Setujui & kirim drone"}</Button></>;
+  ].map(option => <label key={option.value} className={type === option.value ? "selected" : ""}><input type="radio" name={`drone-task-${incident.id}`} value={option.value} checked={type === option.value} disabled={busy} onChange={() => setType(option.value)} /><span><strong>{option.title}</strong><small>{option.text}</small></span></label>)}</fieldset><p className="permission-copy">Dengan menyetujui, kamu mengizinkan drone virtual terbang, memindai{type === "suppression_simulation" ? ", melepas air virtual" : ""}, lalu pulang otomatis. Lokasi dan penerbangan merupakan simulasi.{type === "suppression_simulation" ? " Video pelepasan air menggunakan klip yang disiapkan untuk proyek." : ""}</p>{!available && <p className="inline-warning">Drone belum siap atau sedang digunakan. Kamu bisa menugaskan regu.</p>}{available && needsWater && <p className="inline-warning">Air virtual habis. Pilih pindai area saja atau tugaskan regu.</p>}<Button className="full-width" disabled={busy || !available || needsWater} onClick={() => safely(`/api/incidents/${incident.id}/respond`, { notes: incident.notes, mission_type: type })}>{busy ? "Mengirim…" : "Setujui & kirim drone"}</Button></>;
 }
 
 function TeamChoice({ incident, data, busy, safely }: { incident: Incident; data: Bootstrap; busy: boolean; safely: Actions["safely"] }) {
@@ -88,13 +97,19 @@ function MissionSummary({ mission, payload, allowLaunch = true, busy, ask }: { m
   return <div className="mission-summary"><ol className="mission-progress">{["Berangkat", "Tiba", "Memindai", "Kembali"].map((name, index) => <li key={name} className={steps[index] ? "done" : ""}><span />{name}</li>)}</ol>
     {allowLaunch && mission.status === "proposed" && <Button disabled={busy} variant="outline" onClick={() => ask("Setujui misi virtual?", "Kamu menyetujui target perkiraan dan tugas drone ini.", `/api/missions/${mission.id}/approve`)}>Setujui rencana misi</Button>}
     {allowLaunch && mission.status === "approved" && <Button disabled={busy} variant="outline" onClick={() => ask("Terbangkan drone virtual?", "Drone akan menuju lokasi sesuai rencana yang disetujui.", `/api/missions/${mission.id}/launch`)}>Terbangkan drone</Button>}
-    {!mission.automatic && mission.status === "on_site" && mission.mission_type === "suppression_simulation" && <Button disabled={busy || payload <= 0 || mission.abort_requested} variant="outline" onClick={() => ask("Lepaskan air virtual?", "Pelepasan air merupakan simulasi dan tidak menyatakan api padam. Video memakai rekaman helikopter referensi.", `/api/missions/${mission.id}/release-payload`, { liters: Math.min(5, payload), command_id: crypto.randomUUID() })}>Lepaskan air virtual</Button>}
+    {!mission.automatic && mission.status === "on_site" && mission.mission_type === "suppression_simulation" && <Button disabled={busy || payload <= 0 || mission.abort_requested} variant="outline" onClick={() => ask("Lepaskan air virtual?", "Pelepasan air merupakan simulasi dan tidak menyatakan api padam. Video menggunakan klip pelepasan air yang disiapkan untuk proyek.", `/api/missions/${mission.id}/release-payload`, { liters: Math.min(5, payload), command_id: crypto.randomUUID() })}>Lepaskan air virtual</Button>}
     {!terminal.includes(mission.status) && <details className="disclosure"><summary>Kontrol drone</summary><div className="button-row">{["en_route", "on_site", "suppression_simulation"].includes(mission.status) && <Button size="sm" variant="outline" disabled={busy || mission.abort_requested} onClick={() => ask("Pulangkan drone?", "Drone virtual akan kembali ke pangkalan.", `/api/missions/${mission.id}/return`)}>Pulangkan</Button>}{mission.status !== "returning" && <Button size="sm" variant="destructive" disabled={busy || mission.abort_requested} onClick={() => ask("Hentikan misi?", "Drone yang sudah terbang akan kembali ke pangkalan sebelum tersedia lagi.", `/api/missions/${mission.id}/abort`)}>Hentikan misi</Button>}</div><p className="muted small">Tugas: {mission.mission_type === "reconnaissance" ? "pemindaian area" : "pemindaian dan pelepasan air virtual"}.</p></details>}
   </div>;
 }
 
 function IncidentDetails({ incident, busy, safely, editable }: { incident: Incident; busy: boolean; safely: Actions["safely"]; editable: boolean }) {
   const [notes, setNotes] = useState(incident.notes);
+  const previousNotes = useRef(incident.notes);
+  useEffect(() => {
+    const previous = previousNotes.current;
+    setNotes(current => current === previous ? incident.notes : current);
+    previousNotes.current = incident.notes;
+  }, [incident.notes]);
   const workspace = useWorkspace();
   return <details className="incident-details"><summary>Detail kejadian & catatan</summary><dl className="metadata"><dt>ID kejadian</dt><dd>{incident.id}</dd><dt>Lokasi perkiraan</dt><dd>{incident.latitude !== null && incident.longitude !== null ? `${incident.latitude.toFixed(5)}, ${incident.longitude.toFixed(5)}` : "Belum ditentukan"}</dd>{incident.provenance === "ai" && <><dt>Keyakinan model</dt><dd>{Math.round(incident.confidence * 100)}% · bukan ukuran akurasi</dd></>}{incident.location_uncertainty_m !== null && <><dt>Radius asumsi</dt><dd>±{Math.round(incident.location_uncertainty_m)} m · simulasi</dd></>}</dl>{editable && incident.status !== "pending_review" && <button className="text-button" disabled={busy} onClick={() => { workspace.selectIncident(incident.id); workspace.setPlacing(true); }}> Ubah lokasi perkiraan</button>}<label className="field-label" htmlFor="incident-note">Catatan operator</label><textarea id="incident-note" value={editable ? notes : incident.notes} disabled={!editable || busy} onChange={event => setNotes(event.target.value)} maxLength={4000} placeholder="Tambahkan hal yang perlu diketahui regu." />{editable && <Button variant="outline" size="sm" disabled={busy || notes === incident.notes} onClick={() => safely(`/api/incidents/${incident.id}`, { notes }, "PATCH")}>Simpan catatan</Button>}</details>;
 }

@@ -1,12 +1,13 @@
 import Image from "next/image";
 import Link from "next/link";
-import { LandingExperience, LandingMenu, ForestFilm } from "./landing-experience";
+import { ScanLine, ShieldCheck, Route, ArrowUpRight, FileCheck2 } from "lucide-react";
+import { LandingExperience, LandingMenu, ForestFilm, LandingDroneHUD } from "./landing-experience";
 import styles from "./landing.module.css";
 
 const stages = [
-  { title: "Pantau.", text: "Amati kondisi hutan dari beberapa titik kamera. Deteksi AI membantu menandai indikasi asap dan api untuk diperiksa.", label: "01 / OBSERVASI", detail: "Kamera · Indikasi asap & api" },
+  { title: "Pantau.", text: "Amati rekaman hutan dari beberapa titik pemantauan. Deteksi AI membantu menandai indikasi asap dan api untuk diperiksa.", label: "01 / OBSERVASI", detail: "Video MP4 · Indikasi asap & api" },
   { title: "Verifikasi.", text: "Lihat bukti visual, periksa lokasi perkiraan, lalu tentukan tindak lanjut. Keputusan tetap berada di tangan operator.", label: "02 / PEMERIKSAAN", detail: "Bukti visual · Pemeriksaan operator" },
-  { title: "Koordinasikan.", text: "Hubungkan keputusan dengan penugasan regu dan pemantauan drone. Ikuti perkembangan penanganan dalam satu alur.", label: "03 / PENANGANAN", detail: "Penugasan regu · Misi drone virtual" },
+  { title: "Koordinasikan.", text: "Hubungkan keputusan dengan penugasan regu dan pemantauan drone. Ikuti perkembangan penanganan dalam satu alur.", label: "03 / PENANGANAN", detail: "Penugasan regu · Misi drone" },
   { title: "Evaluasi.", text: "Telusuri kembali kejadian, tindakan, dan hasil penanganan. Setiap langkah tersimpan agar mudah ditinjau.", label: "04 / RIWAYAT", detail: "Catatan aktivitas · Laporan kejadian" },
 ];
 
@@ -26,7 +27,7 @@ export function LandingPage() {
         <div className={styles.heroField}>
           <span className={styles.wordmark} aria-hidden="true">karhutla<span>.ai</span></span>
           <div className={styles.heroCoordinates}><span>PEMANTAUAN HUTAN & LAHAN</span><span>INDONESIA / 01</span></div>
-          <div className={styles.heroModelLabel}><span className={styles.cross}>+</span><span>PERSPEKTIF BARU<br />UNTUK HUTAN KITA</span></div>
+          <LandingDroneHUD /><div className={styles.heroModelLabel}><span className={styles.cross}>+</span><span>PERSPEKTIF BARU<br />UNTUK HUTAN KITA</span></div>
           <div className={styles.heroBottom}><span>AMATI. PAHAMI. TINDAK LANJUTI.</span><span>↓</span></div>
         </div>
         <div className={styles.heroCaption}><h1 id="landing-title">Deteksi lebih awal.<br /><span>Jaga hutan bersama.</span></h1><p>Pemantauan asap dan api, verifikasi operator,<br className={styles.desktopBreak} /> dan koordinasi penanganan dalam satu ruang.</p><a href="#tentang">Jelajahi sistem <span aria-hidden="true">↓</span></a></div>
@@ -58,7 +59,7 @@ export function LandingPage() {
         <div className={styles.sectionLabel}><span>[ 03 — ALUR KERJA ]</span><span>Terhubung dari awal hingga akhir.</span></div>
         <div className={styles.workflowHeading}><h2>Satu alur.<br /><span>Setiap langkah berarti.</span></h2><p>Informasi yang jelas.<br />Tindak lanjut yang terarah.</p></div>
         <div className={styles.workflowBody}>
-          <div className={styles.workflowRail}><span>KOORDINASI DARI SATU RUANG</span><div className={styles.orbit} /><span className={styles.workflowCaveat}>Operasi drone dan regu pada sistem ini<br />merupakan simulasi.</span></div>
+          <div className={styles.workflowRail}><span>KOORDINASI DARI SATU RUANG</span><div className={styles.orbit} /><LandingDroneHUD workflow /></div>
           <div className={styles.steps}>{stages.map((stage, index) => <article key={stage.title} className={styles.step} data-drone={`step-${index}`}><span className={styles.stepLabel}>{stage.label}</span><h3>{stage.title}</h3><p>{stage.text}</p><span className={styles.stepDetail}>{stage.detail}</span></article>)}</div>
         </div>
       </section>
@@ -66,9 +67,23 @@ export function LandingPage() {
       <section id="platform" className={styles.platform}>
         <div className={styles.sectionLabel}><span>[ 04 — PLATFORM ]</span><span>Konteks lengkap. Keputusan lebih terarah.</span></div>
         <div className={styles.sectionHeading}><h2>Seluruh pantauan.<br /><span>Satu ruang kendali.</span></h2><Link className={styles.textLink} href="/dashboard">Jelajahi Dashboard <span aria-hidden="true">↗</span></Link></div>
-        <div className={styles.dashboardFrame}><div className={styles.browserBar}><span><i /><i /><i /></span><span>KARHUTLA.AI / OVERVIEW</span><span>↗</span></div><Image src="/landing/dashboard.webp" alt="Dashboard KARHUTLA.AI dengan pantauan kamera, antrean verifikasi, temperatur area, dan prakiraan cuaca" width={1440} height={1320} sizes="(max-width: 700px) 90vw, 80vw" className={styles.dashboardImage} /></div>
-        <div className={styles.platformDetails}><p><span>01</span>Pantauan & kejadian</p><p><span>02</span>Cuaca & temperatur area</p><p><span>03</span>Indeks potensi kebakaran</p></div>
-        <p className={styles.platformNote}>Indeks potensi kebakaran merupakan indikator eksperimental berbasis kondisi cuaca, bukan probabilitas kebakaran yang tervalidasi.</p>
+        <div className={styles.platformShowcase}>
+          <div className={styles.platformVisual}>
+            <Image src="/landing/forest-poster.webp" alt="Hamparan hutan dari udara sebagai ilustrasi kawasan pemantauan" fill sizes="(max-width: 900px) 100vw, 55vw" className={styles.platformForest} />
+            <div className={styles.platformVisualTop}><span><ScanLine size={15} aria-hidden="true" /> PERSPEKTIF KAWASAN</span><span>FOREST INTELLIGENCE</span></div>
+            <div className={styles.platformTarget} aria-hidden="true"><ScanLine size={46} strokeWidth={1} /><span>AMATI SETIAP PERUBAHAN</span></div>
+            <div className={styles.platformVisualCaption}><span className={styles.platformEyebrow}>DARI PENGAMATAN KE TINDAKAN</span><h3>Konteks yang utuh.<br />Respons yang terarah.</h3><p>Rekaman hutan menjadi awal alur pemeriksaan, koordinasi, dan pencatatan.</p></div>
+          </div>
+          <div className={styles.platformFeatures}>
+            <div className={styles.platformFeatureHeading}><span className={styles.platformEyebrow}>DI DALAM PLATFORM</span><span className={styles.platformPreviewLabel}>Gambaran fitur</span></div>
+            <article className={styles.featureCard}><span className={styles.featureIcon}><ScanLine size={21} aria-hidden="true" /></span><div><span className={styles.featureNumber}>01 / PANTAUAN</span><h3>Video dengan konteks.</h3><p>Empat sudut pemantauan, indikasi asap dan api, serta bukti visual untuk ditinjau.</p></div></article>
+            <article className={styles.featureCard}><span className={styles.featureIcon}><ShieldCheck size={21} aria-hidden="true" /></span><div><span className={styles.featureNumber}>02 / VERIFIKASI</span><h3>Keputusan tetap di tanganmu.</h3><p>Periksa indikasi dan lokasi perkiraan sebelum menyetujui tindak lanjut.</p></div></article>
+            <article className={styles.featureCard}><span className={styles.featureIcon}><Route size={21} aria-hidden="true" /></span><div><span className={styles.featureNumber}>03 / KOORDINASI</span><h3>Ikuti setiap langkah.</h3><p>Hubungkan penugasan regu, misi drone, dan laporan kejadian.</p></div></article>
+            <Link href="/dashboard" className={styles.platformExplore}>Lihat ruang kendali <ArrowUpRight size={20} aria-hidden="true" /></Link>
+          </div>
+        </div>
+        <div className={styles.platformDetails}><p><ScanLine size={17} aria-hidden="true" />Pemantauan & deteksi AI</p><p><ShieldCheck size={17} aria-hidden="true" />Persetujuan operator</p><p><FileCheck2 size={17} aria-hidden="true" />Riwayat & laporan</p></div>
+        <p className={styles.platformNote}>Dari pantauan kawasan hingga laporan, setiap keputusan terhubung dalam satu alur.</p>
       </section>
 
       <section className={styles.closing}>

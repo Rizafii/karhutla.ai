@@ -9,15 +9,16 @@ import { applyTelemetry } from "./realtime";
 export function useOperations() {
   const client = useQueryClient();
   const [connected, setConnected] = useState(false);
-  const query = useQuery({ queryKey: ["bootstrap"], queryFn: () => request<Bootstrap>("/api/bootstrap"), refetchInterval: 10000 });
+  const query = useQuery({ queryKey: ["bootstrap"], queryFn: ({ signal }) => request<Bootstrap>("/api/bootstrap", undefined, "GET", signal), refetchInterval: 10000 });
   useEffect(() => connectEvents(WS, {
     connection: setConnected,
-    resync: async () => { await Promise.all([client.invalidateQueries({ queryKey: ["bootstrap"] }), client.invalidateQueries({ queryKey: ["report"] })]); },
+    resync: async () => { await Promise.all(["bootstrap", "incident", "report", "detections"].map(key => client.invalidateQueries({ queryKey: [key] }))); },
     event: event => {
       if (event.type.endsWith(".telemetry")) client.setQueryData<Bootstrap>(["bootstrap"], previous => applyTelemetry(previous, event));
       else {
-        void client.invalidateQueries({ queryKey: ["bootstrap"] });
-        void client.invalidateQueries({ queryKey: ["report"] });
+        for (const key of ["bootstrap", "incident", "report", "detections"]) {
+          void client.invalidateQueries({ queryKey: [key] });
+        }
       }
     },
   }), [client]);

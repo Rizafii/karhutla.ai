@@ -42,7 +42,7 @@ class Payload(BaseModel):
 
 
 class CameraEdit(BaseModel):
-    source_type: Literal["mp4", "rtsp", "webcam"] = "mp4"
+    source_type: Literal["mp4"] = "mp4"
     source_config: dict[str, str | int]
     heading: float = Field(default=0, ge=0, lt=360)
     fov: float = Field(default=70, gt=0, le=180)

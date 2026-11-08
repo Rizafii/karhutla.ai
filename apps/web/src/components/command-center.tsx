@@ -57,8 +57,7 @@ export function CommandCenter({ onDrone, navbarTarget }: { onDrone: () => void; 
       if (path === "/api/demo/reset" || path === "/api/demo/replay") {
         useWorkspace.setState({ incidentId: null, cameraId: null, reportId: null, placing: false });
       }
-      await client.invalidateQueries({ queryKey: ["bootstrap"] });
-      await client.invalidateQueries({ queryKey: ["report"] });
+      await Promise.all(["bootstrap", "incident", "report", "detections"].map(key => client.invalidateQueries({ queryKey: [key] })));
     } catch (cause) {
       setFailure(cause instanceof Error ? cause.message : "Koneksi belum tersedia.");
       throw cause;

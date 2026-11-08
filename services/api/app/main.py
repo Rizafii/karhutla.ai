@@ -147,14 +147,11 @@ def camera(id: str):
 @app.patch("/api/cameras/{id}", response_model=CameraResponse)
 def edit_camera(id: str, request: CameraEdit):
     config = request.source_config
-    if request.source_type == "mp4":
-        for value in config.values():
-            if not str(value).startswith("/videos/") or ".." in Path(str(value)).parts:
-                raise HTTPException(422, "MP4 harus berada di direktori /videos")
-    elif request.source_type == "rtsp" and not str(config.get("url", "")).startswith("rtsp://"):
-        raise HTTPException(422, "RTSP URL wajib dimulai rtsp://")
-    elif request.source_type == "webcam" and not isinstance(config.get("index"), int):
-        raise HTTPException(422, "Webcam memerlukan index integer")
+    if "normal" not in config or not set(config).issubset({"normal", "scenario"}):
+        raise HTTPException(422, "Sumber video memerlukan normal dan opsi scenario")
+    for value in config.values():
+        if not isinstance(value, str) or not value.startswith("/videos/") or ".." in Path(value).parts or Path(value).suffix.lower() != ".mp4":
+            raise HTTPException(422, "Sumber harus berupa file MP4 di direktori /videos")
     with writing_session() as session:
         item = require(session, Camera, id)
         for key, value in request.model_dump().items():
@@ -186,8 +183,11 @@ async def stream(id: str, annotated: bool = False):
         while True:
             try:
                 data = await asyncio.to_thread(path.read_bytes)
-                yield b"--frame\r\nContent-Type: image/jpeg\r\nContent-Length: " + str(len(data)).encode() + b"\r\n\r\n" + data + b"\r\n"
-            except FileNotFoundError:
+                if data:
+                    yield b"--frame\r\nContent-Type: image/jpeg\r\nContent-Length: " + str(len(data)).encode() + b"\r\n\r\n" + data + b"\r\n"
+            except OSError:
+                # Docker bind mounts can briefly fail a read during atomic frame
+                # replacement. Keep the stream open and try the next frame.
                 pass
             await asyncio.sleep(.2 if not annotated else 1)
     return StreamingResponse(frames(), media_type="multipart/x-mixed-replace; boundary=frame", headers={"Cache-Control": "no-store"})
@@ -198,8 +198,8 @@ def evidence(path: str):
     root = (settings.data_dir / "evidence").resolve()
     target = (root / path).resolve()
     if not target.is_relative_to(root) or not target.is_file():
-        raise HTTPException(404, "Evidence tidak ditemukan")
-    return FileResponse(target)
+        raise HTTPException(404, "Evidence tidak ditemukan", headers={"Cache-Control": "no-store"})
+    return FileResponse(target, headers={"Cache-Control": "no-store"})
 
 
 @app.get("/api/incidents", response_model=list[IncidentResponse])

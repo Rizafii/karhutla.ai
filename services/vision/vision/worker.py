@@ -19,6 +19,12 @@ ROOT = Path(os.getenv("DATA_DIR", "/data"))
 PREVIEW_FPS = float(os.getenv("PREVIEW_FPS", "5"))
 INFERENCE_FPS = float(os.getenv("INFERENCE_FPS", "1"))
 THRESHOLD = float(os.getenv("CONFIDENCE_THRESHOLD", ".6"))
+LOOP_INTERVAL = float(os.getenv("VISION_LOOP_INTERVAL", ".2"))
+OPENCV_THREADS = int(os.getenv("OPENCV_THREADS", "1"))
+if not .01 <= LOOP_INTERVAL <= 1:
+    raise ValueError("VISION_LOOP_INTERVAL harus di antara 0.01 dan 1 detik")
+if OPENCV_THREADS < 1:
+    raise ValueError("OPENCV_THREADS harus lebih besar dari nol")
 if PREVIEW_FPS <= 0 or INFERENCE_FPS <= 0:
     raise ValueError("PREVIEW_FPS dan INFERENCE_FPS harus lebih besar dari nol")
 for directory in (ROOT, ROOT / "frames", ROOT / "evidence"):
@@ -49,11 +55,15 @@ class CameraReader:
     def run(self):
         source_type = self.camera["source_type"]
         while not self.stop.is_set():
-            if source_type == "mp4" and not Path(str(self.source)).is_file():
+            if source_type != "mp4" or not isinstance(self.source, str) or ".." in Path(self.source).parts or Path(self.source).suffix.lower() != ".mp4":
+                self.status, self.error = "unavailable", "Sumber pemantauan harus berupa file video MP4"
+                self.stop.wait(2)
+                continue
+            if not Path(self.source).is_file():
                 self.status, self.error = "unavailable", f"Footage tidak ditemukan: {self.source}"
                 self.stop.wait(2)
                 continue
-            capture = cv2.VideoCapture(self.source, cv2.CAP_FFMPEG if source_type == "rtsp" else cv2.CAP_ANY)
+            capture = cv2.VideoCapture(self.source, cv2.CAP_ANY)
             if not capture.isOpened():
                 self.status, self.error = "reconnecting", "Sumber video tidak dapat dibuka"
                 capture.release()
@@ -62,7 +72,9 @@ class CameraReader:
             fps = capture.get(cv2.CAP_PROP_FPS) or 25
             stride = max(1, int(fps / PREVIEW_FPS)) if source_type == "mp4" else 1
             while not self.stop.is_set():
-                if self.paused:
+                # A restarted worker has no cached frame. Capture one preview
+                # before honoring pause so the paused monitor can still render.
+                if self.paused and self.frame is not None:
                     self.status = "paused"
                     self.stop.wait(.2)
                     continue
@@ -95,8 +107,6 @@ class CameraReader:
 
 
 def main():
-    os.environ.setdefault("OPENCV_FFMPEG_CAPTURE_OPTIONS", "rtsp_transport;tcp|timeout;5000000")
-    cv2.setNumThreads(1)
     detector, model_error = None, None
     try:
         detector = Detector(os.getenv("MODEL_PATH", "/models/wildfire-smoke-fire.pt"), os.getenv("MODEL_DEVICE", "cpu"), THRESHOLD, int(os.getenv("MODEL_IMAGE_SIZE", "416")))
@@ -104,6 +114,8 @@ def main():
     except Exception as error:
         model_error = str(error)
         logger.error("AI unavailable: %s", model_error)
+    # Ultralytics changes OpenCV threads during import; apply our setting last.
+    cv2.setNumThreads(OPENCV_THREADS)
     client = httpx.Client(base_url=os.getenv("API_URL", "http://localhost:8000"), headers={"X-Service-Token": os.getenv("SERVICE_TOKEN", "")}, timeout=10)
     readers, previous_epoch, last_config = {}, None, 0
     pending, demo, total, first = [], {}, 0, time.monotonic()
@@ -122,10 +134,6 @@ def main():
                 for camera in config["cameras"]:
                     src = camera["source_config"]
                     source = src.get("scenario", src.get("normal")) if camera["id"] == "CAM-002" and demo["status"] == "running" and demo["mode"] == "ai" else src.get("normal")
-                    if camera["source_type"] == "rtsp":
-                        source = src.get("url", "")
-                    elif camera["source_type"] == "webcam":
-                        source = int(src.get("index", 0))
                     current = readers.get(camera["id"])
                     if current and (current.source != (source if source is not None else "") or current.camera["source_type"] != camera["source_type"]):
                         current.close()
@@ -188,7 +196,7 @@ def main():
             (ROOT / "worker-heartbeat").touch()
         except Exception:
             logger.exception("Vision loop failed; retrying")
-        time.sleep(.2)
+        time.sleep(LOOP_INTERVAL)
 
 
 if __name__ == "__main__":

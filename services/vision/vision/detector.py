@@ -1,4 +1,5 @@
 import hashlib
+import os
 from pathlib import Path
 
 
@@ -27,7 +28,20 @@ class Detector:
         self.image_size = image_size
         self.version = f"{path.name}:sha256:{hashlib.sha256(path.read_bytes()).hexdigest()}"
         import torch
-        torch.set_num_threads(2)
+        threads = int(os.getenv("TORCH_NUM_THREADS", "2"))
+        if threads < 1:
+            raise ValueError("TORCH_NUM_THREADS harus lebih besar dari nol")
+        self.threads = threads
+        torch.set_num_threads(threads)
+        # Predictor setup calls select_device(), which resets CPU threads.
+        # Reapply our setting after setup and before preprocessing/inference.
+        self.model.add_callback("on_predict_start", self._configure_cpu_threads)
+
+    def _configure_cpu_threads(self, predictor):
+        if predictor.device.type == "cpu":
+            import torch
+            if torch.get_num_threads() != self.threads:
+                torch.set_num_threads(self.threads)
 
     def infer(self, frame):
         result = self.model.predict(frame, device=self.device, conf=self.threshold, imgsz=self.image_size, verbose=False)[0]

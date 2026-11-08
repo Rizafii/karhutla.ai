@@ -16,6 +16,10 @@ def seed(session):
         if not camera:
             session.add(Camera(id=id, name=name, latitude=lat, longitude=lon, heading=heading,
                                source_config=defaults))
+        elif camera.source_type != "mp4":
+            camera.source_type = "mp4"
+            camera.source_config = defaults
+            camera.connection_status, camera.ai_status = "reconnecting", "unavailable"
         elif camera.source_type == "mp4" and camera.source_config == legacy and defaults != legacy:
             camera.source_config = defaults
     if not session.get(Drone, "DRONE-01"):

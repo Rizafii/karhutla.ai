@@ -5,7 +5,8 @@ import * as Dialog from "@radix-ui/react-dialog";
 import { TriangleAlert, X } from "lucide-react";
 import { Button } from "./ui/button";
 import { CameraStream as Stream } from "./camera-stream";
-import { API, request, label, time } from "@/lib/api";
+import { EvidenceImage } from "./evidence-image";
+import { request, label, time } from "@/lib/api";
 import type { Camera, Incident, Report, Event } from "@/lib/types";
 export type Actions = {
   busy: boolean;
@@ -253,8 +254,9 @@ export function ReportModal({
 }) {
   const { data, error, refetch } = useQuery({
     queryKey: ["report", id],
-    queryFn: () => request<Report>(`/api/incidents/${id}/report`),
+    queryFn: ({ signal }) => request<Report>(`/api/incidents/${id}/report`, undefined, "GET", signal),
     enabled: !!id,
+    refetchInterval: id ? 5000 : false,
   });
   function download() {
     if (!data) return;
@@ -296,11 +298,7 @@ export function ReportModal({
           <div className="report-grid">
             <div>
               {data.evidence_path ? (
-                <img
-                  className="report-image"
-                  src={`${API}/api/evidence/${data.evidence_path.replace(/^evidence\//, "")}`}
-                  alt="Bukti kejadian"
-                />
+                <EvidenceImage key={data.evidence_path} className="report-image" path={data.evidence_path} alt="Bukti kejadian" />
               ) : (
                 <div className="evidence-manual">
                   <TriangleAlert />
@@ -378,27 +376,19 @@ export function CameraEditor({
   save: Actions["safely"];
   busy: boolean;
 }) {
-  const [sourceType, setSourceType] = useState(camera.source_type),
-    [config, setConfig] = useState(
-      JSON.stringify(camera.source_config, null, 2),
-    ),
+  const [normal, setNormal] = useState(String(camera.source_config.normal ?? "")),
+    [scenario, setScenario] = useState(String(camera.source_config.scenario ?? "")),
     [heading, setHeading] = useState(camera.heading),
     [fov, setFov] = useState(camera.fov),
     [range, setRange] = useState(camera.range_m),
     [error, setError] = useState("");
   async function submit() {
-    let source_config;
-    try {
-      source_config = JSON.parse(config);
-    } catch {
-      setError("Format konfigurasi JSON belum valid");
-      return;
-    }
+    const source_config = { normal: normal.trim(), ...(scenario.trim() ? { scenario: scenario.trim() } : {}) };
     try {
       await save(
         `/api/cameras/${camera.id}`,
         {
-          source_type: sourceType,
+          source_type: "mp4",
           source_config,
           heading,
           fov,
@@ -414,27 +404,12 @@ export function CameraEditor({
   return (
     <Modal open onClose={onClose} title={`Konfigurasi ${camera.id}`}>
       <div className="editor-body">
-        <label className="field-label" htmlFor="camera-source-type">Jenis sumber</label>
-        <select
-          id="camera-source-type"
-          value={sourceType}
-          onChange={(e) => setSourceType(e.target.value)}
-        >
-          <option value="mp4">MP4 lokal</option>
-          <option value="rtsp">RTSP stream</option>
-          <option value="webcam">Webcam (native)</option>
-        </select>
-        <label className="field-label" htmlFor="camera-source-config">Konfigurasi sumber (JSON)</label>
-        <textarea
-          id="camera-source-config"
-          className="config-input"
-          value={config}
-          onChange={(e) => setConfig(e.target.value)}
-        />
-        <p className="help-text">
-          MP4: normal/scenario di /videos. RTSP: url. Webcam: index integer.
-          Perubahan memulai ulang capture.
-        </p>
+        <p className="help-text">Pemantauan menggunakan rekaman video MP4 yang diputar ulang.</p>
+        <label className="field-label" htmlFor="video-normal">Video utama</label>
+        <input id="video-normal" value={normal} onChange={e => setNormal(e.target.value)} placeholder="/videos/normal.mp4" />
+        <label className="field-label" htmlFor="video-scenario">Video skenario (opsional)</label>
+        <input id="video-scenario" value={scenario} onChange={e => setScenario(e.target.value)} placeholder="/videos/scenario.mp4" />
+        <p className="help-text">Simpan file di assets/videos, lalu gunakan path /videos/nama.mp4. Video skenario dipakai pada CAM-002 saat demo AI. Perubahan memulai ulang pemutaran.</p>
         <div className="editor-numbers">
           <label>
             Azimuth

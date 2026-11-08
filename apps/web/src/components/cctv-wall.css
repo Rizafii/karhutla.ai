@@ -35,8 +35,35 @@
 .cctv-incident strong { margin-left: auto; font-weight: 600; }
 .cctv-wall-foot { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 10px; color: var(--muted); font-size: 12px; margin-top: 20px; }
 .cctv-failure { color: #8b5c1c; background: #fff4e2; padding: 12px; margin-bottom: 16px; border-radius: 7px; font-size: 13px; }
-.cctv-focus-description { padding: 14px 24px; color: var(--muted); font-size: 14px; }
-.cctv-focus-video { aspect-ratio: 16 / 9; max-height: 70vh; background: #172126; }
+.cctv-pause-notice { display: flex; align-items: center; gap: 12px; padding: 12px 16px; margin-bottom: 16px; border: 1px solid #ead6b1; border-radius: 10px; background: #fff8eb; color: #805719; }
+.cctv-pause-notice > span { flex: 1; }
+.cctv-pause-notice strong, .cctv-pause-notice small { display: block; }
+.cctv-pause-notice strong { font-size: 13px; font-weight: 600; }
+.cctv-pause-notice small { margin-top: 3px; font-size: 12px; }
+.cctv-focus-overlay { background: #0c172bb8; backdrop-filter: blur(5px); }
+.modal.cctv-focus { width: min(1080px, calc(100vw - 48px)); max-height: 94dvh; border: 1px solid #ffffff30; border-radius: 18px; box-shadow: 0 32px 100px #07122466; }
+.cctv-focus-heading { display: flex; align-items: center; justify-content: space-between; gap: 16px; padding: 20px 24px 16px; }
+.cctv-focus-eyebrow { display: block; margin-bottom: 5px; color: var(--muted); font-size: 10px; font-weight: 600; letter-spacing: .1em; }
+.cctv-focus-heading h2 { font-size: 21px; font-weight: 600; line-height: 1.3; }
+.cctv-focus-heading > button { flex-shrink: 0; border-radius: 50%; background: #f3f5f8; color: #526077; }
+.cctv-focus-toolbar { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 0 24px 16px; }
+.cctv-view-switch { display: inline-flex; gap: 3px; padding: 4px; border-radius: 9px; background: #f0f3f7; }
+.cctv-view-switch button { min-height: 34px; padding: 6px 13px; border-radius: 6px; font-size: 12px; color: var(--muted); }
+.cctv-view-switch button[aria-pressed="true"] { background: white; color: #213650; box-shadow: 0 1px 4px #17243b16; font-weight: 600; }
+.cctv-focus-status { display: inline-flex; align-items: center; gap: 7px; color: #657184; font-size: 12px; white-space: nowrap; }
+.cctv-focus-status i { width: 7px; height: 7px; border-radius: 50%; background: #9ca6b3; }
+.cctv-focus-status.connected i { background: #21a578; box-shadow: 0 0 0 3px #21a57818; }
+.cctv-focus-status.paused i { background: #d89b35; }
+.cctv-focus > .cctv-pause-notice, .cctv-focus > .cctv-failure { margin: 0 24px 16px; }
+.cctv-focus-video { display: flex; align-items: center; justify-content: center; width: 100%; height: min(56.25vw, 60dvh); background: #0b121c; overflow: hidden; }
+.cctv-focus-video .camera-stream { width: 100%; height: 100%; object-fit: contain; }
+.cctv-focus-video .video-empty { width: 100%; height: 100%; min-height: 160px; }
+.cctv-focus-footer { display: flex; align-items: center; justify-content: space-between; gap: 20px; padding: 16px 24px; background: #fafbfd; border-top: 1px solid var(--line); }
+.cctv-focus-footer label { display: flex; align-items: center; gap: 10px; color: var(--muted); font-size: 12px; white-space: nowrap; }
+.cctv-focus-footer select { width: auto; max-width: 260px; padding: 8px 30px 8px 10px; border: 1px solid var(--line); border-radius: 7px; background: white; color: #243752; font: inherit; }
+.cctv-focus-footer > div { text-align: right; color: var(--muted); font-size: 11px; }
+.cctv-focus-footer small { display: block; margin-top: 4px; font-size: 11px; }
+.cctv-focus button:focus-visible, .cctv-focus select:focus-visible { outline: 2px solid var(--blue); outline-offset: 3px; }
 .cctv-wall:fullscreen { width: 100vw; height: 100dvh; overflow-y: auto; }
 .cctv-wall:fullscreen .cctv-grid { min-height: calc(100dvh - 150px); align-content: center; }
 .cctv-wall:fullscreen .cctv-video { max-height: calc((100dvh - 300px) / 2); }
@@ -44,6 +71,17 @@
   .cctv-toolbar { flex-direction: column; align-items: flex-start; gap: 14px; }
 }
 @media (max-width: 600px) {
+  .modal.cctv-focus { width: calc(100vw - 24px); border-radius: 12px; }
+  .cctv-focus-heading { padding: 16px; }
+  .cctv-focus-heading h2 { font-size: 18px; }
+  .cctv-focus-toolbar { padding: 0 16px 14px; flex-wrap: wrap; }
+  .cctv-focus-footer { padding: 14px 16px; flex-direction: column; align-items: stretch; gap: 12px; }
+  .cctv-focus-footer label { justify-content: space-between; }
+  .cctv-focus-footer select { min-width: 0; max-width: 70%; }
+  .cctv-focus-footer > div { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 4px 12px; text-align: left; }
+  .cctv-focus-footer small { margin-top: 0; }
+  .cctv-focus > .cctv-pause-notice, .cctv-focus > .cctv-failure { margin: 0 16px 14px; }
+  .cctv-pause-notice { gap: 8px; padding: 10px; }
   .cctv-wall { padding: 16px; }
   .cctv-grid { grid-template-columns: 1fr; }
   .cctv-controls { gap: 6px; }
